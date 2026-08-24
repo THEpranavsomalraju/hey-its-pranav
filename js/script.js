@@ -80,6 +80,28 @@ if(!reduce){
   })();
 }
 
+// hero: what I'm listening to. The sticker stays hidden unless the endpoint
+// answers with a track, so the page is unchanged when Spotify isn't wired up.
+(function(){
+  const el=document.getElementById('np');
+  if(!el)return;
+  fetch('/api/now-playing',{headers:{accept:'application/json'}})
+    .then(r=>r.ok?r.json():null)
+    .then(d=>{
+      if(!d||!d.title)return;
+      const line=d.title+(d.artist?' — '+d.artist:'');
+      document.getElementById('np-label').textContent=d.playing?'listening to':'last played';
+      document.getElementById('np-song').textContent=line;
+      el.title=line;
+      // only ever hand the href a real Spotify link
+      if(typeof d.url==='string'&&d.url.startsWith('https://open.spotify.com/'))el.href=d.url;
+      else el.removeAttribute('href');
+      el.classList.toggle('past',!d.playing);
+      el.hidden=false;
+    })
+    .catch(()=>{});      // offline, or no endpoint — leave it hidden
+})();
+
 // experience: one forward pass. A signal threads down the timeline as you
 // scroll, and each stop activates as it arrives.
 (function(){

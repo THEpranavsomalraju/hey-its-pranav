@@ -95,9 +95,10 @@ if(!reduce){
         const state=line+'|'+d.playing;
         if(state===shown)return;          // nothing changed, leave the DOM alone
         shown=state;
-        document.getElementById('np-label').textContent=d.playing?'listening to':'last played';
-        document.getElementById('np-song').textContent=line;
-        el.title=line;
+        const said=(d.playing?'listening to':'last played')+(d.artist?' · '+d.artist:'');
+        document.getElementById('np-song').textContent=d.title;
+        document.getElementById('np-tip').textContent=said;
+        el.title=line;               // full text, since the pill truncates
         // only ever hand the href a real Spotify link
         if(typeof d.url==='string'&&d.url.startsWith('https://open.spotify.com/'))el.href=d.url;
         else el.removeAttribute('href');

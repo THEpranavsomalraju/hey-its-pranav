@@ -58,13 +58,22 @@ module.exports=async function handler(req,res){
     const artist=(item.artists||[]).map(a=>a.name).join(', ')
       ||(item.show&&item.show.name)||'';
 
+    // Spotify hangs a lot on the end of a title — "- From ...", "(feat. ...)",
+    // "- Remastered 2011". It reads as noise on a sticker this small, and it is
+    // what pushes the real name out past the ellipsis. A dash only counts when
+    // one of these words follows, so "Hello - Goodbye" survives intact.
+    const title=String(item.name||'')
+      .replace(/\s*[([](?:feat\.?|ft\.?|with|from|remaster|live|radio edit|single|extended)[^)\]]*[)\]]/ig,'')
+      .replace(/\s*[-–—]\s*(?:from|feat\.?|ft\.?|with|remaster|live|radio edit|single version|extended).*$/i,'')
+      .trim()||item.name||'';
+
     // max-age=0 so the browser always asks; the short s-maxage keeps the edge
     // from hammering Spotify while still tracking a track change quickly
     res.setHeader('cache-control','public, max-age=0, s-maxage=10, stale-while-revalidate=20');
     res.status(200).json({
       configured:true,
       playing,
-      title:item.name||'',
+      title,
       artist,
       url:item.external_urls&&item.external_urls.spotify||null
     });

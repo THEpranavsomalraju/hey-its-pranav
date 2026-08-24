@@ -151,25 +151,29 @@ section{min-height:100vh;padding:96px 0 84px;display:flex;flex-direction:column;
 .stack:hover .sticker.top{transform:rotate(3deg) translateY(-3px)}
 .stack:hover .sticker.bottom{transform:rotate(-4deg) translateY(3px)}
 
-/* now playing — top right. Sized to the portrait, so a long title truncates
-   instead of sprawling out over the rail. */
-.sticker.np{top:-18px;right:-14px;display:flex;align-items:center;gap:8px;
-  max-width:min(240px,86%);padding:5px 12px 5px 10px;transform:rotate(5deg);
+/* now playing — top right. One line, same weight as the other stickers, and
+   narrow enough to clear "that's me" on the opposite corner. The bars carry
+   the live/last-played state; the tip on hover spells it out with the artist. */
+.sticker.np{top:-20px;right:-16px;display:flex;align-items:center;gap:7px;
+  max-width:min(182px,64%);padding:3px 13px 3px 10px;transform:rotate(4deg);
   background:var(--surface);color:var(--ink)}
 .sticker.np[hidden]{display:none}
-.stack:hover .sticker.np{transform:rotate(2deg) translateY(-3px)}
-.sticker.np:hover{transform:rotate(-2deg) translateY(-4px)}
-.np-in{display:flex;flex-direction:column;min-width:0;line-height:1.08}
-.np-in b{font-family:"Plus Jakarta Sans",sans-serif;font-size:9px;font-weight:700;
-  letter-spacing:.11em;text-transform:uppercase;color:var(--muted)}
-.np-in > span{font-size:17px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.eq{display:flex;align-items:flex-end;gap:2.5px;height:15px;flex:none}
+.stack:hover .sticker.np{transform:rotate(-1deg) translateY(-3px)}
+.sticker.np:hover{transform:rotate(-3deg) translateY(-5px)}
+.np-song{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.eq{display:flex;align-items:flex-end;gap:2.5px;height:14px;flex:none}
 .eq i{width:3px;border-radius:2px;background:var(--accent);height:35%;
   animation:eq .95s ease-in-out infinite}
 .eq i:nth-child(2){animation-delay:.28s}
 .eq i:nth-child(3){animation-delay:.54s}
 @keyframes eq{0%,100%{height:32%}50%{height:100%}}
-.np.past .eq i{animation:none;height:45%;background:var(--muted)}
+.np.past .eq i{animation:none;height:42%;background:var(--muted)}
+.np-tip{position:absolute;top:calc(100% + 9px);right:2px;max-width:230px;
+  font-family:Caveat,cursive;font-size:17px;color:var(--clay);white-space:nowrap;
+  overflow:hidden;text-overflow:ellipsis;opacity:0;pointer-events:none;
+  transform:translateY(-5px) rotate(3deg);
+  transition:opacity .3s,transform .3s cubic-bezier(.16,1,.3,1)}
+.sticker.np:hover .np-tip{opacity:1;transform:translateY(0) rotate(3deg)}
 
 /* born 07.07.2007 — three reels resting on 7, spun on hover */
 .sticker.dob{bottom:-18px;left:-18px;display:flex;align-items:center;gap:7px;

@@ -60,8 +60,9 @@ addEventListener('load',()=>window.scrollTo(0,0));
 
         <!-- filled in by /api/now-playing; stays hidden if that isn't set up -->
         <a class="sticker np" id="np" target="_blank" rel="noopener noreferrer" hidden>
+          <span class="np-tip" id="np-tip" aria-hidden="true"></span>
           <span class="eq" aria-hidden="true"><i></i><i></i><i></i></span>
-          <span class="np-in"><b id="np-label">listening to</b><span id="np-song"></span></span>
+          <span class="np-song" id="np-song"></span>
         </a>
 
         <div class="portrait" id="portrait">

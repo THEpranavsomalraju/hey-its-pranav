@@ -1,9 +1,12 @@
 // One-time helper: mint the Spotify refresh token for /api/now-playing.
 //
-// Run it locally, never on the server. Nothing is written to disk and the
-// secret is read from the environment, so it stays out of your shell history:
+// Run it locally, never on the server. Put the credentials in .env (which is
+// gitignored) and let node read them, so they never reach your shell history:
 //
-//   SPOTIFY_CLIENT_ID=xxx SPOTIFY_CLIENT_SECRET=yyy node scripts/spotify-token.mjs
+//   SPOTIFY_CLIENT_ID=...
+//   SPOTIFY_CLIENT_SECRET=...
+//
+//   node --env-file=.env scripts/spotify-token.mjs
 //
 // In the Spotify dashboard, the app's Redirect URIs must include exactly:
 //   http://127.0.0.1:8888/callback

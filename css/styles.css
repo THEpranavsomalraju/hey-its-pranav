@@ -155,12 +155,16 @@ section{min-height:100vh;padding:96px 0 84px;display:flex;flex-direction:column;
    narrow enough to clear "that's me" on the opposite corner. The bars carry
    the live/last-played state; the tip on hover spells it out with the artist. */
 .sticker.np{top:-20px;right:-32px;display:flex;align-items:center;gap:7px;
-  max-width:min(182px,64%);padding:3px 13px 3px 10px;transform:rotate(4deg);
+  max-width:min(202px,68%);padding:3px 13px 3px 10px;transform:rotate(4deg);
   background:var(--surface);color:var(--ink)}
 .sticker.np[hidden]{display:none}
 .stack:hover .sticker.np{transform:rotate(-1deg) translateY(-3px)}
 .sticker.np:hover{transform:rotate(-3deg) translateY(-5px)}
-.np-song{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* overflow:hidden gives us the ellipsis, but it also clips at the content box —
+   and Caveat is slanted, so the last glyph's flourish overhangs its advance
+   width and loses its tail. The padding gives that overhang somewhere to sit. */
+.np-song{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  padding:1px 4px 1px 1px;margin:-1px -4px -1px -1px;line-height:1.5}
 .eq{display:flex;align-items:flex-end;gap:2.5px;height:14px;flex:none}
 .eq i{width:3px;border-radius:2px;background:var(--accent);height:35%;
   animation:eq .95s ease-in-out infinite}

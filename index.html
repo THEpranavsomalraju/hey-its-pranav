@@ -75,7 +75,14 @@ addEventListener('load',()=>window.scrollTo(0,0));
 
 <section id="work">
   <div class="wrap">
-    <div class="head rev"><span class="label">where i've been</span><span class="rule"></span></div>
+    <div class="head rev"><span class="label">where i've been</span><span class="scribble">one forward pass</span><span class="rule"></span></div>
+
+    <!-- the signal threading down the timeline; path + stops are measured in JS -->
+    <svg class="spine" aria-hidden="true">
+      <path class="thread"></path>
+      <path class="thread lit"></path>
+      <circle class="pulse" r="4.5"></circle>
+    </svg>
 
     <div class="row">
       <div class="text">

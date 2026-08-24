@@ -80,6 +80,87 @@ if(!reduce){
   })();
 }
 
+// experience: one forward pass. A signal threads down the timeline as you
+// scroll, and each stop activates as it arrives.
+(function(){
+  const wrap=document.querySelector('#work .wrap'),svg=document.querySelector('.spine');
+  if(!wrap||!svg)return;
+  const section=document.getElementById('work');
+  const track=svg.querySelector('.thread:not(.lit)'),lit=svg.querySelector('.thread.lit');
+  const pulse=svg.querySelector('.pulse');
+  const rows=[...wrap.querySelectorAll('.row')];
+  if(!rows.length)return;
+  const NS='http://www.w3.org/2000/svg';
+  const stops=rows.map(()=>{
+    const c=document.createElementNS(NS,'circle');
+    c.setAttribute('class','stop');c.setAttribute('r','6.5');
+    svg.appendChild(c);return c;
+  });
+  svg.appendChild(pulse);          // keep the signal riding over the stops
+  let len=0,at=[];
+
+  function layout(){
+    const wb=wrap.getBoundingClientRect(),cx=wb.width/2;
+    // each row bows the thread toward whichever side its logo sits on
+    const bow=Math.min(96,wb.width*.1);
+    const pts=rows.map(r=>{
+      const rb=r.getBoundingClientRect(),fb=r.querySelector('.figure').getBoundingClientRect();
+      const side=(fb.left+fb.width/2)<(wb.left+wb.width/2)?-1:1;
+      return {x:cx+side*bow,y:rb.top-wb.top+rb.height/2};
+    });
+    const all=[{x:cx,y:pts[0].y-72},...pts,{x:cx,y:pts[pts.length-1].y+72}];
+    let d=`M${all[0].x.toFixed(1)} ${all[0].y.toFixed(1)}`;
+    for(let i=1;i<all.length;i++){
+      const p=all[i-1],c=all[i],m=(c.y-p.y)*.5;
+      d+=` C${p.x.toFixed(1)} ${(p.y+m).toFixed(1)} ${c.x.toFixed(1)} ${(c.y-m).toFixed(1)} ${c.x.toFixed(1)} ${c.y.toFixed(1)}`;
+    }
+    track.setAttribute('d',d);lit.setAttribute('d',d);
+    len=track.getTotalLength();
+    stops.forEach((s,i)=>{s.setAttribute('cx',pts[i].x.toFixed(1));s.setAttribute('cy',pts[i].y.toFixed(1))});
+    if(!len){at=pts.map(()=>0);return}     // nothing measurable yet; no sampling
+    // where each stop falls along the thread, so it can light on arrival
+    const step=len/240;
+    at=pts.map(p=>{
+      let best=0,dist=Infinity;
+      for(let l=0;l<=len;l+=step){
+        const q=track.getPointAtLength(l),dd=(q.x-p.x)**2+(q.y-p.y)**2;
+        if(dd<dist){dist=dd;best=l}
+      }
+      return best/len;
+    });
+    lit.style.strokeDasharray=len;
+    draw();
+  }
+
+  function draw(){
+    if(!len)return;
+    const sb=section.getBoundingClientRect();
+    // 0 as the section reaches the lower third, 1 by the time it clears the top
+    const p=Math.max(0,Math.min(1,(innerHeight*.72-sb.top)/Math.max(1,sb.height*.72)));
+    lit.style.strokeDashoffset=len*(1-p);
+    const q=track.getPointAtLength(len*p);
+    pulse.setAttribute('cx',q.x.toFixed(1));pulse.setAttribute('cy',q.y.toFixed(1));
+    pulse.classList.toggle('on',p>.01&&p<.995);
+    stops.forEach((s,i)=>s.classList.toggle('on',p>=at[i]));
+  }
+
+  if(reduce){                      // no travelling signal, just the finished thread
+    layout();
+    lit.style.strokeDashoffset=0;
+    stops.forEach(s=>s.classList.add('on'));
+    addEventListener('resize',()=>{layout();lit.style.strokeDashoffset=0});
+    return;
+  }
+  let tick=false;
+  addEventListener('scroll',()=>{
+    if(tick)return;tick=true;
+    requestAnimationFrame(()=>{draw();tick=false});
+  },{passive:true});
+  addEventListener('resize',()=>{clearTimeout(svg._t);svg._t=setTimeout(layout,180)});
+  if(document.fonts&&document.fonts.ready)document.fonts.ready.then(layout);
+  layout();
+})();
+
 // projects network: an output fires, its path lights up, the readout follows
 (function(){
   const data=[

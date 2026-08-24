@@ -108,9 +108,12 @@ if(!reduce){
       .catch(()=>{});    // offline, or no endpoint — leave it hidden
   }
   load();
-  setInterval(load,30000);
-  // catch up straight away when the tab comes back, rather than waiting out the tick
+  setInterval(load,15000);
+  // Catch up the moment attention returns, rather than waiting out the tick.
+  // visibilitychange covers tab switches; focus also covers alt-tabbing out to
+  // the Spotify app itself, which leaves the tab "visible" and fires nothing else.
   addEventListener('visibilitychange',()=>{if(!document.hidden)load()});
+  addEventListener('focus',load);
 })();
 
 // experience: one forward pass. A signal threads down the timeline as you

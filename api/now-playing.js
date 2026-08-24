@@ -58,7 +58,9 @@ module.exports=async function handler(req,res){
     const artist=(item.artists||[]).map(a=>a.name).join(', ')
       ||(item.show&&item.show.name)||'';
 
-    res.setHeader('cache-control','public, s-maxage=30, stale-while-revalidate=90');
+    // max-age=0 so the browser always asks; the short s-maxage keeps the edge
+    // from hammering Spotify while still tracking a track change quickly
+    res.setHeader('cache-control','public, max-age=0, s-maxage=10, stale-while-revalidate=20');
     res.status(200).json({
       configured:true,
       playing,

@@ -85,21 +85,31 @@ if(!reduce){
 (function(){
   const el=document.getElementById('np');
   if(!el)return;
-  fetch('/api/now-playing',{headers:{accept:'application/json'}})
-    .then(r=>r.ok?r.json():null)
-    .then(d=>{
-      if(!d||!d.title)return;
-      const line=d.title+(d.artist?' — '+d.artist:'');
-      document.getElementById('np-label').textContent=d.playing?'listening to':'last played';
-      document.getElementById('np-song').textContent=line;
-      el.title=line;
-      // only ever hand the href a real Spotify link
-      if(typeof d.url==='string'&&d.url.startsWith('https://open.spotify.com/'))el.href=d.url;
-      else el.removeAttribute('href');
-      el.classList.toggle('past',!d.playing);
-      el.hidden=false;
-    })
-    .catch(()=>{});      // offline, or no endpoint — leave it hidden
+  let shown='';
+  function load(){
+    fetch('/api/now-playing',{headers:{accept:'application/json'},cache:'no-store'})
+      .then(r=>r.ok?r.json():null)
+      .then(d=>{
+        if(!d||!d.title)return;          // keep whatever is up rather than flickering
+        const line=d.title+(d.artist?' — '+d.artist:'');
+        const state=line+'|'+d.playing;
+        if(state===shown)return;          // nothing changed, leave the DOM alone
+        shown=state;
+        document.getElementById('np-label').textContent=d.playing?'listening to':'last played';
+        document.getElementById('np-song').textContent=line;
+        el.title=line;
+        // only ever hand the href a real Spotify link
+        if(typeof d.url==='string'&&d.url.startsWith('https://open.spotify.com/'))el.href=d.url;
+        else el.removeAttribute('href');
+        el.classList.toggle('past',!d.playing);
+        el.hidden=false;
+      })
+      .catch(()=>{});    // offline, or no endpoint — leave it hidden
+  }
+  load();
+  setInterval(load,30000);
+  // catch up straight away when the tab comes back, rather than waiting out the tick
+  addEventListener('visibilitychange',()=>{if(!document.hidden)load()});
 })();
 
 // experience: one forward pass. A signal threads down the timeline as you

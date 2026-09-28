@@ -200,14 +200,17 @@ if(!reduce){
 // projects network: an output fires, its path lights up, the readout follows
 (function(){
   const data=[
-    {n:'01',t:'EyeCode',d:'A webcam turns eye blinks into Morse code, then into text. Won HackNC 2025.',
+    {n:'01',t:'Refuge',d:'Send a tornado or hurricane through any real US town, turn its schools and churches into shelters, then replay the storm against the best possible plan. I built the risk models and the simulator calibration. First place, Carolina Data Challenge 2026.',
+     tags:['lightgbm','shap','duckdb','noaa data'],feeds:[0,5,6],a:[0,1,3],b:[0,2],
+     url:'https://github.com/THEpranavsomalraju/refuge',live:'https://refugestorms.vercel.app'},
+    {n:'02',t:'EyeCode',d:'A webcam turns eye blinks into Morse code, then into text. Won HackNC 2025.',
      tags:['python','flask','opencv','mediapipe'],feeds:[0,2],a:[0,1],b:[0,1],url:'https://github.com/THEpranavsomalraju/eyecode'},
-    {n:'02',t:'Clinician GUI',d:'Built with a Caltech mentor so clinicians run the rejection model with no terminal, no IDE, and no machine learning background.',
-     tags:['python','pytorch','gui'],feeds:[0,1,4],a:[1,2],b:[1,2],url:'https://github.com/THEpranavsomalraju/Clinician-GUI'},
-    {n:'03',t:'Rejection Classifier',d:'A fine-tuned ResNet50 grading cardiac transplant rejection at 98% validation accuracy, and 99.2% on the two calls pathologists agree on least.',
+    {n:'03',t:'Clinician GUI',d:'Built with a Caltech mentor so clinicians run the rejection model with no terminal, no IDE, and no machine learning background.',
+     tags:['typescript','react','tailwind','vite'],feeds:[1,3,4],a:[1,2],b:[1,2],url:'https://github.com/THEpranavsomalraju/Clinician-GUI'},
+    {n:'04',t:'Rejection Classifier',d:'A fine-tuned ResNet50 grading cardiac transplant rejection at 98% validation accuracy, and 99.2% on the two calls pathologists agree on least.',
      tags:['pytorch','resnet50','umap'],feeds:[0,1],a:[0,2,3],b:[0,2],url:'https://github.com/THEpranavsomalraju/Rejection-Classifer-Caltech-Duke'},
-    {n:'04',t:'Card Dispute PRD',d:'21,508 CFPB complaint narratives, six tagged failure patterns, and one scoped fix at the denial stage, checked against Regulation Z.',
-     tags:['product','python','cfpb api'],feeds:[0,3,4],a:[2,3],b:[1,2],url:'https://github.com/THEpranavsomalraju/card-dispute-prd'}
+    {n:'05',t:'Card Dispute PRD',d:'21,508 CFPB complaint narratives, six tagged failure patterns, and one scoped fix at the denial stage, checked against Regulation Z.',
+     tags:['product','python','cfpb api'],feeds:[0,5,6],a:[2,3],b:[1,2],url:'https://github.com/THEpranavsomalraju/card-dispute-prd'}
   ];
   const svg=document.querySelector('.graph');
   if(!svg)return;
@@ -263,7 +266,8 @@ if(!reduce){
       document.getElementById('p-t').textContent=p.t;
       document.getElementById('p-d').textContent=p.d;
       document.getElementById('p-tags').innerHTML=p.tags.map(t=>'<span class="tag">'+t+'</span>').join('');
-      document.getElementById('p-link').href=p.url;
+      document.getElementById('p-link').href=p.live||p.url;
+      document.getElementById('p-link-label').textContent=p.live?'play it live':'open on github';
       panel.classList.remove('swap');
     };
     if(instant||reduce){fill();return}

@@ -49,7 +49,7 @@ const root=document.documentElement;
 const themeNow=()=>root.dataset.theme||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');
 function syncThemeBtn(){$('#theme').innerHTML=svgIcon(themeNow()==='dark'?SUN:MOON)}
 function setTheme(t,x=innerWidth-40,y=22){
-  const apply=()=>{root.dataset.theme=t;store.set('v2-theme',t);syncThemeBtn();cover.recolor()};
+  const apply=()=>{root.dataset.theme=t;store.set('v2-theme',t);syncThemeBtn()};
   if(!document.startViewTransition||reduce){apply();return}
   const vt=document.startViewTransition(apply);
   vt.ready.then(()=>{
@@ -153,7 +153,9 @@ const net=(()=>{
   // numbers-only, since the readout underneath names them
   function draw(){
     const c=narrow.matches;
-    const XI=c?140:230,XA=c?212:520,XB=c?276:790,XO=c?338:1020;
+    // desktop: the four columns sit evenly about x=0, which fit() pins to the
+    // middle of the page, so the inputs and the projects mirror each other
+    const XI=c?140:-420,XA=c?212:-140,XB=c?276:140,XO=c?338:420;
     let h=`<text class="lab" x="${XI-16}" y="18" text-anchor="end">what i use</text>`+
           `<text class="lab" x="${c?XO:XO-17}" y="18" text-anchor="${c?'middle':'start'}">what it made</text>`;
     IY.forEach((y,i)=>AY.forEach((ya,j)=>{h+=`<path class="edge e-i${i}-a${j}" d="${d(XI,y,XA,ya)}"/>`}));
@@ -176,7 +178,9 @@ const net=(()=>{
   function fit(){
     if(svg.closest('[hidden]'))return;
     const bb=svg.getBBox(),pad=12;
-    svg.setAttribute('viewBox',`${bb.x-pad} ${bb.y-pad} ${bb.width+pad*2} ${bb.height+pad*2}`);
+    if(narrow.matches){svg.setAttribute('viewBox',`${bb.x-pad} ${bb.y-pad} ${bb.width+pad*2} ${bb.height+pad*2}`);return}
+    const half=Math.max(-bb.x,bb.x+bb.width)+pad;
+    svg.setAttribute('viewBox',`${-half} ${bb.y-pad} ${half*2} ${bb.height+pad*2}`);
   }
 
   function clear(){
@@ -357,6 +361,26 @@ document.addEventListener('keydown',e=>{
   document.addEventListener('visibilitychange',()=>{if(!document.hidden)load()});
 })();
 
+// ───────────────────────── github, as a skyline ─────────────────────────
+// real contributions from /api/contributions, refreshed while the tab is open
+(function(){
+  const host=$('#gh');let sky=null,shown='';
+  function load(){
+    fetch('/api/contributions',{headers:{accept:'application/json'},cache:'no-store'})
+      .then(r=>r.ok?r.json():null)
+      .then(d=>{
+        if(!d||!Array.isArray(d.days)||!d.days.length)return;
+        const key=d.days.map(x=>x.count).join(',');
+        if(key===shown)return;shown=key;
+        host.hidden=false;
+        if(sky)sky.setData(d.days);
+        else sky=window.ContributionSkyline.mount(host,{data:d.days,palette:'mono'});
+      }).catch(()=>{});
+  }
+  load();setInterval(()=>{if(!document.hidden)load()},10*60*1000);
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden)load()});
+})();
+
 // ───────────────────────── the name ─────────────────────────
 // whichever letters you pass over fall back to signal for a beat, then resolve
 (function(){
@@ -385,83 +409,6 @@ document.addEventListener('keydown',e=>{
     if(Math.random()<.7)setTimeout(()=>burst(n-1),50);
     if(Math.random()<.7)setTimeout(()=>burst(n+1),50);
   }));
-})();
-
-// ───────────────────────── cover: a quiet field of neurons ─────────────────────────
-const cover=(()=>{
-  const wrap=$('#cover-wrap'),cv=$('#cover'),ctx=cv.getContext('2d');
-  const GAP=22;
-  let W=0,H=0,dots=[],ink='#000',mx=-999,my=-999,inView=true,raf=0,syn=null,ripple=null,lastMove=0;
-  function recolor(){ink=getComputedStyle(root).getPropertyValue('--ink').trim()||'#000';kick()}
-  function size(){
-    const dpr=Math.min(2,devicePixelRatio||1);W=wrap.clientWidth;H=wrap.clientHeight;
-    cv.width=W*dpr;cv.height=H*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);
-    dots=[];
-    const ox=(W%GAP)/2+GAP/2,oy=(H%GAP)/2+GAP/2;
-    for(let y=oy;y<H;y+=GAP)for(let x=ox;x<W;x+=GAP)dots.push({x,y,s:0,dx:0,dy:0});
-    kick();
-  }
-  function frame(t){
-    raf=0;
-    ctx.clearRect(0,0,W,H);
-    let busy=false;
-    const near=Date.now()-lastMove<1600;
-    for(const d of dots){
-      let ts=0,tx=0,ty=0;
-      if(near){
-        const vx=d.x-mx,vy=d.y-my,dist=Math.hypot(vx,vy);
-        if(dist<120){const f=1-dist/120;ts=f*f;tx=vx/(dist||1)*f*7;ty=vy/(dist||1)*f*7}
-      }
-      if(ripple){
-        const r=(t-ripple.t0)*.55,band=Math.abs(Math.hypot(d.x-ripple.x,d.y-ripple.y)-r);
-        if(band<26){const f=1-band/26;ts=Math.max(ts,f*.9)}
-      }
-      d.s+=(ts-d.s)*.14;d.dx+=(tx-d.dx)*.14;d.dy+=(ty-d.dy)*.14;
-      if(Math.abs(ts-d.s)>.004||Math.abs(tx-d.dx)>.05)busy=true;
-      ctx.globalAlpha=.2+d.s*.6;ctx.fillStyle=ink;
-      ctx.beginPath();ctx.arc(d.x+d.dx,d.y+d.dy,.9+d.s*1.6,0,6.283);ctx.fill();
-    }
-    if(ripple){if((t-ripple.t0)*.55>Math.hypot(W,H))ripple=null;else busy=true}
-    if(syn){
-      const u=(t-syn.t0)/1700;
-      if(u>=1)syn=null;
-      else{
-        busy=true;
-        const a=Math.sin(Math.PI*u);
-        ctx.globalAlpha=a*.5;ctx.strokeStyle=ink;ctx.lineWidth=1;
-        ctx.beginPath();ctx.moveTo(syn.a.x,syn.a.y);ctx.quadraticCurveTo(syn.cx,syn.cy,syn.b.x,syn.b.y);ctx.stroke();
-        const v=Math.min(1,u*1.4);
-        const ix=(1-v)*(1-v)*syn.a.x+2*(1-v)*v*syn.cx+v*v*syn.b.x,iy=(1-v)*(1-v)*syn.a.y+2*(1-v)*v*syn.cy+v*v*syn.b.y;
-        ctx.globalAlpha=a;ctx.fillStyle=ink;ctx.beginPath();ctx.arc(ix,iy,2,0,6.283);ctx.fill();
-      }
-    }
-    ctx.globalAlpha=1;
-    if(busy&&inView)kick();
-  }
-  function kick(){if(!raf)raf=requestAnimationFrame(frame)}
-  // every so often two of them connect, and nobody's told why
-  function synapse(){
-    if(inView&&!document.hidden&&!reduce&&dots.length){
-      const a=dots[Math.floor(Math.random()*dots.length)];
-      const cands=dots.filter(d=>{const r=Math.hypot(d.x-a.x,d.y-a.y);return r>GAP*2.5&&r<GAP*6});
-      if(cands.length){
-        const b=cands[Math.floor(Math.random()*cands.length)];
-        syn={a,b,t0:performance.now(),cx:(a.x+b.x)/2+(Math.random()-.5)*60,cy:(a.y+b.y)/2+(Math.random()-.5)*60};kick();
-      }
-    }
-    setTimeout(synapse,4200+Math.random()*5200);
-  }
-  [wrap,$('.page')].forEach(el=>el.addEventListener('pointermove',e=>{
-    const r=wrap.getBoundingClientRect();mx=e.clientX-r.left;my=e.clientY-r.top;lastMove=Date.now();if(!reduce)kick();
-  },{passive:true}));
-  wrap.addEventListener('dblclick',e=>{
-    if(reduce)return;const r=wrap.getBoundingClientRect();
-    ripple={x:e.clientX-r.left,y:e.clientY-r.top,t0:performance.now()};kick();
-  });
-  new IntersectionObserver(([en])=>{inView=en.isIntersecting;if(inView)kick()}).observe(wrap);
-  addEventListener('resize',()=>{clearTimeout(size._t);size._t=setTimeout(size,120)});
-  recolor();size();setTimeout(synapse,6000);
-  return{recolor};
 })();
 
 // ───────────────────────── a second cursor ─────────────────────────
@@ -508,6 +455,6 @@ const cover=(()=>{
 // ───────────────────────── boot ─────────────────────────
 addEventListener('hashchange',route);
 route();
-console.log('%chi, you found the console.%c\npress / anywhere. double-click the cover. run a finger over my name.',
+console.log('%chi, you found the console.%c\npress / anywhere. run a finger over my name.',
   'font:600 13px Inter,sans-serif','font:12px JetBrains Mono,monospace;color:#888');
 })();

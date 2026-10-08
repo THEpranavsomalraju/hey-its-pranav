@@ -29,8 +29,6 @@
   </div>
 </header>
 
-<div class="cover" id="cover-wrap"><canvas id="cover" aria-hidden="true"></canvas></div>
-
 <main class="page">
   <div class="page-icon"><img src="../portrait.jpg" alt="Pranav Somalraju" width="400" height="400" /></div>
   <h1 class="title" id="title" aria-label="Pranav Somalraju">Pranav Somalraju</h1>
@@ -63,53 +61,41 @@
       <dt>phone</dt><dd><a href="tel:+19806220567">(980) 622-0567</a></dd>
     </dl>
     <blockquote>Pick whichever is easiest. I reply within a day, usually sooner.</blockquote>
+
+    <!-- live from /api/contributions; stays hidden if GitHub can't be reached -->
+    <div class="gh" id="gh" hidden></div>
   </section>
 
   <!-- EXPERIENCE -->
   <section class="view" id="v-experience" role="tabpanel" aria-labelledby="t-experience" data-view="experience" hidden>
     <ol class="tl" id="tl">
-      <li class="tl-i" style="--logo:url(../img/unc.png);--brand:#4B9CD3;--lw:52px">
+      <li class="tl-i" style="--logo:url(img/unc.png);--brand:#4B9CD3;--lh:34px;--ar:1.257">
         <span class="tl-when">present</span>
         <span class="tl-dot" aria-hidden="true"></span>
-        <div class="tl-body">
-          <span class="tl-logo" aria-hidden="true"><span class="logo"></span><span class="logo tint"></span></span>
-          <h3>UNC Chapel Hill</h3>
-          <p><span class="role">Student</span> Computer science and neuroscience.</p>
-        </div>
+        <div class="tl-body"><h3>UNC Chapel Hill</h3><p><span class="role">Student</span> Computer science and neuroscience.</p></div>
+        <span class="tl-logo" aria-hidden="true"><span class="logo"></span><span class="logo tint"></span></span>
       </li>
-      <li class="tl-i" style="--logo:url(../img/caltech.png);--brand:#FF6C0C;--lw:118px">
+      <li class="tl-i" style="--logo:url(img/caltech.png);--brand:#FF6C0C;--lh:23px;--ar:4.135">
         <span class="tl-when">dec 2025 — now</span>
         <span class="tl-dot" aria-hidden="true"></span>
-        <div class="tl-body">
-          <span class="tl-logo" aria-hidden="true"><span class="logo"></span><span class="logo tint"></span></span>
-          <h3>Caltech</h3>
-          <p><span class="role">Research</span> Deep learning.</p>
-        </div>
+        <div class="tl-body"><h3>Caltech</h3><p><span class="role">Research</span> Deep learning.</p></div>
+        <span class="tl-logo" aria-hidden="true"><span class="logo"></span><span class="logo tint"></span></span>
       </li>
-      <li class="tl-i" style="--logo:url(../img/duke.png);--brand:#012169;--brand-d:#5b84e6;--lw:104px">
+      <li class="tl-i" style="--logo:url(img/duke.png);--brand:#012169;--brand-d:#5b84e6;--lh:30px;--ar:2.886">
         <span class="tl-when">sep 2024 — now</span>
         <span class="tl-dot" aria-hidden="true"></span>
-        <div class="tl-body">
-          <span class="tl-logo" aria-hidden="true"><span class="logo"></span><span class="logo tint"></span></span>
-          <h3>Duke</h3>
-          <p><span class="role">Research</span> AI models for pathologists.</p>
-        </div>
+        <div class="tl-body"><h3>Duke</h3><p><span class="role">Research</span> AI models for pathologists.</p></div>
+        <span class="tl-logo" aria-hidden="true"><span class="logo"></span><span class="logo tint"></span></span>
       </li>
-      <li class="tl-i plain">
+      <li class="tl-i">
         <span class="tl-when">now</span>
         <span class="tl-dot" aria-hidden="true"></span>
-        <div class="tl-body">
-          <h3>UNC Health</h3>
-          <p><span class="role">Work</span> Medical assistant, part time.</p>
-        </div>
+        <div class="tl-body"><h3>UNC Health</h3><p><span class="role">Work</span> Medical assistant, part time.</p></div>
       </li>
-      <li class="tl-i plain">
+      <li class="tl-i">
         <span class="tl-when">earlier</span>
         <span class="tl-dot" aria-hidden="true"></span>
-        <div class="tl-body">
-          <h3>Harvard Medical School</h3>
-          <p><span class="role">Research</span></p>
-        </div>
+        <div class="tl-body"><h3>Harvard Medical School</h3><p><span class="role">Research</span></p></div>
       </li>
     </ol>
   </section>
@@ -143,6 +129,7 @@
 </div>
 <div class="ghost-sel" id="ghost-sel" aria-hidden="true"></div>
 
+<script src="skyline.js"></script>
 <script src="app.js"></script>
 </body>
 </html>

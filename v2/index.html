@@ -47,18 +47,10 @@
 
     <h2 data-md="##">Recently</h2>
     <ul class="updates">
-      <li><a href="#projects/gummi">Gummi</a> won overall at WolfHacks 2026. It's a glucose coach that checks its own predictions.</li>
-      <li><a href="#projects/refuge">Refuge</a> took 1st at the Carolina Data Challenge 2026. It simulates storms against real towns.</li>
+      <li><time class="ago" datetime="2026-10-04">oct 4</time><span><a class="go" href="#projects/gummi">Gummi<svg class="go-ic" viewBox="0 0 12 12" aria-hidden="true"><path d="M3.5 8.5 8.5 3.5M4.5 3.5h4v4"/></svg></a> won overall at WolfHacks 2026. It's a glucose coach that checks its own predictions.</span></li>
+      <li><time class="ago" datetime="2026-09-27">sep 27</time><span><a class="go" href="#projects/refuge">Refuge<svg class="go-ic" viewBox="0 0 12 12" aria-hidden="true"><path d="M3.5 8.5 8.5 3.5M4.5 3.5h4v4"/></svg></a> took 1st at the Carolina Data Challenge 2026. It simulates storms against real towns.</span></li>
     </ul>
 
-    <!-- live from /api/listening; stays hidden when Spotify isn't answering -->
-    <div class="ls" id="ls" hidden>
-      <div class="ls-head">
-        <h2 data-md="##">Listening</h2>
-        <div class="ls-nav"><button type="button" id="ls-prev" aria-label="Newer song">←</button><button type="button" id="ls-next" aria-label="Older song">→</button></div>
-      </div>
-      <div id="ls-car"></div>
-    </div>
 
     <h2 data-md="##">Say hello</h2>
     <dl class="contact">
@@ -71,6 +63,16 @@
 
     <!-- live from /api/contributions; stays hidden if GitHub can't be reached -->
     <div class="gh" id="gh" hidden></div>
+
+    <!-- live from /api/listening; stays hidden when Spotify isn't answering -->
+    <div class="ls" id="ls" hidden>
+      <div class="ls-head">
+        <h2 data-md="##">Listening</h2>
+        <div class="ls-nav"><button type="button" id="ls-prev" aria-label="Newer song">←</button><button type="button" id="ls-next" aria-label="Older song">→</button></div>
+      </div>
+      <div id="ls-car"></div>
+    </div>
+
   </section>
 
   <!-- EXPERIENCE -->
@@ -80,6 +82,12 @@
         <span class="tl-when">present</span>
         <span class="tl-dot" aria-hidden="true"></span>
         <div class="tl-body"><h3>UNC Chapel Hill</h3><p><span class="role">Student</span> Computer science and neuroscience.</p></div>
+        <span class="tl-logo" aria-hidden="true"><span class="logo"></span><span class="logo tint"></span></span>
+      </li>
+      <li class="tl-i" style="--logo:url(img/atc.svg);--brand:#56A0D3;--lh:36px;--ar:1.038">
+        <span class="tl-when">sep 2026 — now</span>
+        <span class="tl-dot" aria-hidden="true"></span>
+        <div class="tl-body"><h3>App Team Carolina</h3><p><span class="role">Backend developer</span> Luminary team.</p></div>
         <span class="tl-logo" aria-hidden="true"><span class="logo"></span><span class="logo tint"></span></span>
       </li>
       <li class="tl-i" style="--logo:url(img/caltech.png);--brand:#FF6C0C;--lh:23px;--ar:4.135">

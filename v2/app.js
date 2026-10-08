@@ -342,6 +342,14 @@ document.addEventListener('keydown',e=>{
   if(n)location.hash=n;
 });
 
+// ───────────────────────── recently: how long ago ─────────────────────────
+$$('time.ago').forEach(t=>{
+  const d=new Date(t.getAttribute('datetime')+'T12:00:00'),days=Math.floor((Date.now()-d)/86400000);
+  if(isNaN(days))return;
+  t.textContent=days<1?'today':days<7?days+'d ago':days<30?Math.floor(days/7)+'w ago':days<365?Math.floor(days/30)+'mo ago':Math.floor(days/365)+'y ago';
+  t.title=d.toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
+});
+
 // ───────────────────────── listening ─────────────────────────
 // what's on now, then what played before it, from /api/listening. new songs
 // slide in only while nobody's browsing the older ones.

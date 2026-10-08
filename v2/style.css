@@ -301,7 +301,7 @@ blockquote{margin:26px 0 0;padding:0 0 0 14px;border-left:2px solid var(--ink);c
 .pal-i[aria-selected="true"]{background:var(--hover-2)}
 .pal-empty{padding:22px 12px;color:var(--muted);font-size:14px;text-align:center}
 
-/* ───────────────────────── toast, ghost, footer ───────────────────────── */
+/* ───────────────────────── toast, ghost ───────────────────────── */
 .toast{position:fixed;left:50%;bottom:26px;z-index:70;transform:translate(-50%,14px);opacity:0;pointer-events:none;
   background:var(--ink);color:var(--bg);font-size:13.5px;font-weight:500;padding:9px 14px;border-radius:8px;transition:opacity .25s,transform .35s var(--ease)}
 .toast.on{opacity:1;transform:translate(-50%,0)}
@@ -316,10 +316,6 @@ blockquote{margin:26px 0 0;padding:0 0 0 14px;border-left:2px solid var(--ink);c
   box-shadow:inset 2px 0 0 var(--ink);opacity:0;transition:opacity .35s}
 .ghost-sel.on{opacity:1}
 
-.foot{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:72px;padding-top:18px;border-top:1px solid var(--line);
-  font:12px var(--mono);color:var(--muted)}
-.foot .hint{opacity:.55;transition:opacity .2s}
-.foot .hint:hover{opacity:1}
 
 /* the theme switch spreads out from wherever you clicked */
 ::view-transition-old(root),::view-transition-new(root){animation:none;mix-blend-mode:normal}
@@ -327,7 +323,7 @@ blockquote{margin:26px 0 0;padding:0 0 0 14px;border-left:2px solid var(--ink);c
 /* ───────────────────────── small screens ───────────────────────── */
 @media (max-width:760px){
   .page{padding:0 18px 64px}
-  .edited,.crumb-name,.foot .hint{display:none}
+  .edited,.crumb-name{display:none}
   .lead{font-size:17px}
   .tl::before{left:7px;top:10px}
   .tl-i{grid-template-columns:15px 1fr auto;column-gap:14px;padding-bottom:30px}

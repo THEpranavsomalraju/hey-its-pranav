@@ -132,7 +132,7 @@ const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'
 // ───────────── the component ─────────────
 function mount(host,opts={}){
   const o=Object.assign({data:[],endDate:null,palette:'mono',unit:'contribution',unitPlural:null,heightScale:1,duration:1300,
-    weekStart:0,orbit:true,defaultView:'3d',locale:'en-US',title:null},opts);
+    weekStart:0,orbit:true,defaultView:'3d',locale:'en-US',title:null,enterDelay:1100,enterRatio:.6},opts);
   const plural=o.unitPlural||o.unit+'s',locale=o.locale;
   const nf=new Intl.NumberFormat(locale);
   const df=new Intl.DateTimeFormat(locale,{month:'short',day:'numeric',timeZone:'UTC'});
@@ -219,10 +219,11 @@ function mount(host,opts={}){
       ', shown as a '+(view==='3d'?'3D skyline':'heat map')+'. Use the arrow keys to read individual days.');
   }
   function renderChrome(){
-    const is3d=view==='3d',corners=width>=560,showRow=!(is3d&&corners);
+    // until the chart has risen, the chrome describes the flat map it is showing
+    const is3d=(entered?view:'2d')==='3d',corners=width>=560,showRow=!(is3d&&corners);
     root.classList.toggle('is3d',is3d);root.classList.toggle('corners',corners);
     thumb.style.transform=is3d?'translateX(100%)':'translateX(0)';
-    for(const v in btns)btns[v].setAttribute('aria-pressed',String(view===v));
+    for(const v in btns)btns[v].setAttribute('aria-pressed',String((is3d?'3d':'2d')===v));
     const big=Math.round(Math.max(30,Math.min(56,width*.058)));
     root.style.setProperty('--sk-big',big+'px');
     [[cornerTR,.55,-10],[cornerBL,.65,10]].forEach(([c,f,dy])=>{
@@ -247,14 +248,18 @@ function mount(host,opts={}){
     tipText.innerHTML=c?`<strong>${c.count?nf.format(c.count)+' '+esc(noun(c.count)):'No '+esc(plural)}</strong><span class="sk-dim"> on ${esc(dfy.format(dayMs(c.date)))}</span>`:' ';
     if(activeI>=0)tipWidth(tip.offsetWidth);
   }
-  function setView(v){if(v===view)return;view=v;renderText();renderChrome();setTarget();kick()}
+  function setView(v){
+    // a click on the toggle is its own answer: no need to wait for the rise
+    if(!entered){entered=true;clearTimeout(enterT);if(io)io.disconnect()}
+    view=v;renderText();renderChrome();setTarget();kick();
+  }
   function setLegend(i){if(i===legendLevel)return;legendLevel=i;renderSwatches();kick()}
 
   // ── engine: the same render loop as the React version ──
   const ctx=canvas.getContext('2d');
   const reduceMq=matchMedia('(prefers-reduced-motion: reduce)'),darkMq=matchMedia('(prefers-color-scheme: dark)');
   let reduced=reduceMq.matches;
-  let t=0,target=0,entered=false,yaw=0,elev=0,yawGoal=0,elevGoal=0;
+  let t=0,target=0,entered=false,enterT=0,io=null,yaw=0,elev=0,yawGoal=0,elevGoal=0;
   let W=0,H2=0,H3=0,Hmax=0,lastH=-1,dpr=1,gutter=30,labelW=30,font='10px sans-serif';
   const col=new Float32Array(15),colGoal=new Float32Array(15);let colReady=false;
   let fg=FG_FALLBACK,bg=BG_FALLBACK,isDark=false;
@@ -495,9 +500,15 @@ function mount(host,opts={}){
   }
 
   load();renderText();retheme();renderChrome();relayout();
-  // the 3D view rises out of the flat one the first time it is seen
-  const enter=()=>{if(entered)return;entered=true;if(reduced)t=view==='3d'?1:0;setTarget()};
-  const io=new IntersectionObserver(es=>{if(es.some(e=>e.isIntersecting)){enter();io.disconnect()}},{threshold:.35});
+  // the 3D view rises out of the flat one the first time it is seen, but
+  // only once most of it is on screen and has stayed there a moment, so the
+  // flat map gets read before it lifts. scroll away first and it waits.
+  const enter=()=>{if(entered)return;entered=true;if(reduced)t=view==='3d'?1:0;renderChrome();setTarget()};
+  io=new IntersectionObserver(es=>{
+    const seen=es.some(e=>e.isIntersecting&&e.intersectionRatio>=o.enterRatio);
+    if(seen&&!enterT)enterT=setTimeout(()=>{enter();io.disconnect()},o.enterDelay);
+    else if(!seen&&enterT){clearTimeout(enterT);enterT=0}
+  },{threshold:[0,o.enterRatio]});
   io.observe(stage);
   const ro=new ResizeObserver(()=>{if(Math.round(stage.clientWidth)!==W)relayout()});ro.observe(stage);
   const mo=new MutationObserver(retheme);mo.observe(document.documentElement,{attributes:true,attributeFilter:['class','style','data-theme']});

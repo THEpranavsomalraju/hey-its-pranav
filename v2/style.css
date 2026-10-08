@@ -102,6 +102,14 @@ a.crumb:hover{background:var(--hover)}
 
 p{margin:0 0 14px}
 .lead{font-size:18px;line-height:1.65}
+/* the bio's key words: ideas in a serif italic, the concrete work under a
+   stroke of ink that draws itself in, one after another, the first time
+   the bio is seen */
+.bio em{font-family:var(--serif);font-style:italic;font-size:1.16em;line-height:1;letter-spacing:.005em;color:var(--ink)}
+.bio mark{color:var(--ink);background:linear-gradient(transparent 34%,var(--hl) 34%,var(--hl) 94%,transparent 94%) no-repeat 0 0/0% 100%;
+  padding:0 .08em;margin:0 -.08em;-webkit-box-decoration-break:clone;box-decoration-break:clone;--hl:color-mix(in srgb,var(--ink) 20%,transparent)}
+.bio.inked mark{background-size:100% 100%;transition:background-size .9s cubic-bezier(.65,0,.25,1) calc(var(--n,0) * .35s + .25s)}
+.bio mark:hover{--hl:color-mix(in srgb,var(--ink) 32%,transparent)}
 h2{position:relative;font-size:15px;font-weight:600;margin:42px 0 12px}
 /* markdown's heading marks, there when you look for them */
 @media (hover:hover) and (min-width:900px){

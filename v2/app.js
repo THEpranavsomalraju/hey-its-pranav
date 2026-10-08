@@ -342,6 +342,18 @@ document.addEventListener('keydown',e=>{
   if(n)location.hash=n;
 });
 
+// ───────────────────────── the bio's ink ─────────────────────────
+// the highlighter strokes go down the first time the bio is actually seen
+(function(){
+  const bio=$('#bio');if(!bio)return;
+  $$('mark',bio).forEach((m,n)=>m.style.setProperty('--n',n));
+  if(reduce){bio.classList.add('inked');return}
+  const io=new IntersectionObserver(es=>{
+    if(es.some(e=>e.isIntersecting)){requestAnimationFrame(()=>bio.classList.add('inked'));io.disconnect()}
+  },{threshold:.6});
+  io.observe(bio);
+})();
+
 // ───────────────────────── recently: how long ago ─────────────────────────
 $$('time.ago').forEach(t=>{
   const d=new Date(t.getAttribute('datetime')+'T12:00:00'),days=Math.floor((Date.now()-d)/86400000);

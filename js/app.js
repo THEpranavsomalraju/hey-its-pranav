@@ -367,6 +367,28 @@ $$('time.ago').forEach(t=>{
 // slide in only while nobody's browsing the older ones.
 (function(){
   const box=$('#ls'),host=$('#ls-car');let car=null,shown='';
+  // Spotify's history trails what's actually been on, so the page also keeps
+  // its own: whenever the song at the front changes, the one it replaced
+  // goes into history right away. Kept in this browser for a few hours.
+  const SAME=15*60*1000,HOLD=6*3600*1000;
+  const read=k=>{try{return JSON.parse(store.get(k)||'null')}catch(e){return null}};
+  let mem=read('ls-seen')||[],front=read('ls-front');
+  function merge(tracks){
+    const cur=tracks[0]&&(tracks[0].playing||tracks[0].paused)?tracks[0]:null;
+    if(cur&&front&&front.id!==cur.id)mem.unshift(Object.assign({},front,{playing:false,paused:false,playedAt:new Date().toISOString()}));
+    if(cur)front=cur;
+    mem=mem.filter(t=>t&&t.playedAt&&Date.now()-Date.parse(t.playedAt)<HOLD).slice(0,12);
+    store.set('ls-seen',JSON.stringify(mem));store.set('ls-front',JSON.stringify(front));
+    const rest=tracks.slice(cur?1:0).concat(mem).filter(t=>t.playedAt).sort((x,y)=>Date.parse(y.playedAt)-Date.parse(x.playedAt));
+    const out=cur?[cur]:[];
+    for(const t of rest){
+      const at=Date.parse(t.playedAt);
+      if(cur&&t.id===cur.id&&Date.now()-at<SAME)continue;
+      if(out.some(o=>o.id===t.id&&o.playedAt&&Math.abs(Date.parse(o.playedAt)-at)<SAME))continue;
+      out.push(t);if(out.length>=12)break;
+    }
+    return out;
+  }
   const ago=iso=>{
     const s=(Date.now()-new Date(iso))/1000;
     if(!(s>=0))return'';
@@ -377,7 +399,7 @@ $$('time.ago').forEach(t=>{
     title:t.title,
     description:t.artist+(t.album&&t.album!==t.title?' · '+t.album:''),
     image:t.image,imageAlt:'Cover of '+(t.album||t.title),
-    overlay:t.playing?'<span class="eq"><i></i><i></i><i></i></span>now playing':esc(ago(t.playedAt)),
+    overlay:t.playing?'<span class="eq"><i></i><i></i><i></i></span>now playing':esc((t.paused?'paused · ':'')+ago(t.playedAt)),
     action:t.url?'Play on Spotify':null,href:t.url
   }));
   function load(){
@@ -385,7 +407,8 @@ $$('time.ago').forEach(t=>{
       .then(r=>r.ok?r.json():null)
       .then(d=>{
         if(!d||!Array.isArray(d.tracks)||!d.tracks.length)return;
-        const key=d.tracks.map(t=>t.id+(t.playing?'*':'')).join();
+        d.tracks=merge(d.tracks);
+        const key=d.tracks.map(t=>t.id+(t.playing?'*':t.paused?'~':'')).join();
         if(key===shown||(car&&car.busy))return;
         shown=key;box.hidden=false;
         const slides=toSlides(d.tracks);
@@ -395,7 +418,7 @@ $$('time.ago').forEach(t=>{
         $('#ls-next').addEventListener('click',()=>car.step(1));
       }).catch(()=>{});
   }
-  load();setInterval(()=>{if(!document.hidden)load()},30000);
+  load();setInterval(()=>{if(!document.hidden)load()},15000);
   document.addEventListener('visibilitychange',()=>{if(!document.hidden)load()});
 })();
 

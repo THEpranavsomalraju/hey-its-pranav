@@ -17,6 +17,30 @@ const NOW_URL='https://api.spotify.com/v1/me/player/currently-playing';
 const RECENT_URL='https://api.spotify.com/v1/me/player/recently-played?limit=30';
 const KEEP=12;
 
+// Spotify's recently-played only logs a song once it has played long enough
+// to count, and catches up late; skips never appear. So the history alone
+// trails what's actually been on. Each time this sees the current song
+// change, it remembers the one that just ended, and merges those in. That
+// memory lives as long as this function instance stays warm, which is what
+// covers someone watching the page while the music changes; the page keeps
+// its own copy too, so a cold start can't take it back from them.
+const seen=[];
+let last=null;
+const SAME=15*60*1000; // one song twice inside this window is one listen
+
+function merge(current,lists){
+  const all=[].concat(...lists).filter(t=>t&&t.id&&t.playedAt).sort((a,b)=>Date.parse(b.playedAt)-Date.parse(a.playedAt));
+  const out=current?[current]:[];
+  for(const t of all){
+    const at=Date.parse(t.playedAt);
+    if(current&&t.id===current.id&&Date.now()-at<SAME)continue;
+    if(out.some(o=>o.id===t.id&&o.playedAt&&Math.abs(Date.parse(o.playedAt)-at)<SAME))continue;
+    out.push(t);
+    if(out.length>=KEEP)break;
+  }
+  return out;
+}
+
 // now-playing.js's trimming, plus "bonus": "- Remastered 2011", "(feat. …)" and the
 // like are noise on a card this small.
 const tidy=name=>String(name||'')
@@ -57,23 +81,31 @@ module.exports=async function handler(req,res){
     const headers={authorization:'Bearer '+access_token};
 
     const [nr,rr]=await Promise.all([fetch(NOW_URL,{headers}),fetch(RECENT_URL,{headers})]);
-    const tracks=[];
-    // currently playing answers 204 with no body when nothing is on
+    let current=null;
+    // Whatever is loaded in the player comes first, playing or paused.
+    // `timestamp` is when playback last changed: the pause, the skip.
+    // Currently playing answers 204 with no body when nothing is loaded.
     if(nr.status===200){
       const d=await nr.json().catch(()=>null);
-      if(d&&d.item&&d.is_playing)tracks.push(shape(d.item,{playing:true,playedAt:null}));
+      if(d&&d.item){
+        const at=d.timestamp?new Date(d.timestamp).toISOString():new Date().toISOString();
+        current=shape(d.item,{playing:!!d.is_playing,paused:!d.is_playing,playedAt:d.is_playing?null:at});
+        // the song before this one just ended, about when this one started
+        if(last&&last.id!==current.id){
+          seen.unshift(Object.assign({},last,{playing:false,paused:false,playedAt:at}));
+          seen.length=Math.min(seen.length,KEEP);
+        }
+        last=current;
+      }
     }
+    const history=[];
     if(rr.ok){
       const d=await rr.json().catch(()=>null);
       for(const it of (d&&d.items)||[]){
-        if(!it.track)continue;
-        // a song on repeat is one card, not five
-        const prev=tracks[tracks.length-1];
-        if(prev&&prev.id===it.track.id)continue;
-        tracks.push(shape(it.track,{playing:false,playedAt:it.played_at||null}));
-        if(tracks.length>=KEEP)break;
+        if(it.track)history.push(shape(it.track,{playing:false,paused:false,playedAt:it.played_at||null}));
       }
     }
+    const tracks=merge(current,[history,seen]);
     res.setHeader('cache-control','public, max-age=0, s-maxage=15, stale-while-revalidate=30');
     res.status(200).json({configured:true,tracks});
   }catch(err){

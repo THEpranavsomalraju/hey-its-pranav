@@ -1,33 +1,23 @@
-<!DOCTYPE html>
-<html lang="en" data-theme="light">
+<!doctype html>
+<html lang="en">
 <head>
-<script>
-document.documentElement.className+=" js";
-// always open at the top: no restored scroll position, no mid-page reload
-if('scrollRestoration' in history)history.scrollRestoration='manual';
-if(location.hash)history.replaceState(null,'',location.pathname+location.search);
-window.scrollTo(0,0);
-addEventListener('DOMContentLoaded',()=>window.scrollTo(0,0));
-addEventListener('load',()=>window.scrollTo(0,0));
-</script>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Pranav Somalraju</title>
-<meta name="description" content="Pranav Somalraju — computer science and neuroscience at UNC Chapel Hill, deep learning research at Caltech and Duke." />
+<meta name="description" content="Pranav Somalraju — computer science and neuroscience at UNC Chapel Hill. Machine learning and computer vision, with research at Duke and Caltech." />
 
 <link rel="icon" href="/favicon.ico" sizes="any" />
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
 <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-<meta name="theme-color" content="#EFEDE8" media="(prefers-color-scheme: light)" />
-<meta name="theme-color" content="#141513" media="(prefers-color-scheme: dark)" />
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+<meta name="theme-color" content="#0d0d0d" media="(prefers-color-scheme: dark)" />
 
-<!-- Social preview. og:url and og:image have to be absolute — crawlers do not
-     reliably resolve relative ones — so both need updating when the custom
-     domain goes live. -->
+<!-- Social preview. og:url and og:image have to be absolute: crawlers do not
+     reliably resolve relative ones. -->
 <meta property="og:type" content="website" />
 <meta property="og:site_name" content="Pranav Somalraju" />
 <meta property="og:title" content="Pranav Somalraju" />
-<meta property="og:description" content="Computer science and neuroscience at UNC Chapel Hill. Deep learning research at Caltech and Duke." />
+<meta property="og:description" content="Computer science and neuroscience at UNC Chapel Hill. Machine learning and computer vision, with research at Duke and Caltech." />
 <meta property="og:url" content="https://pranavsomalraju.dev/" />
 <meta property="og:image" content="https://pranavsomalraju.dev/img/og.png" />
 <meta property="og:image:width" content="1200" />
@@ -35,208 +25,135 @@ addEventListener('load',()=>window.scrollTo(0,0));
 <meta property="og:image:alt" content="Pranav Somalraju" />
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content="Pranav Somalraju" />
-<meta name="twitter:description" content="Computer science and neuroscience at UNC Chapel Hill. Deep learning research at Caltech and Duke." />
+<meta name="twitter:description" content="Computer science and neuroscience at UNC Chapel Hill. Machine learning and computer vision, with research at Duke and Caltech." />
 <meta name="twitter:image" content="https://pranavsomalraju.dev/img/og.png" />
-
+<script>try{var t=localStorage.getItem('theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Caveat:wght@500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/styles.css" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/styles.css" />
 </head>
 <body>
-<div class="intro" id="intro">
-  <div class="intro-in">
-    <span class="intro-hi">hey there, welcome in</span>
-    <div class="intro-mask"><span class="intro-name">Pranav Somalraju</span></div>
-    <div class="intro-rule"><i></i></div>
+
+<header class="topbar" id="topbar">
+  <nav class="crumbs" aria-label="Breadcrumb">
+    <a class="crumb" href="#home"><span class="mono-p" aria-hidden="true">P</span><span class="crumb-name">Pranav Somalraju</span></a>
+    <span class="slash" aria-hidden="true">/</span>
+    <span class="crumb cur" id="crumb" aria-current="page"></span>
+  </nav>
+  <div class="tb-right">
+    <span class="edited" id="edited"></span>
+    <button class="tb-btn" id="open-palette" aria-label="Commands"><kbd>⌘K</kbd></button>
+    <button class="tb-btn sq" id="theme" aria-label="Switch theme"></button>
   </div>
-  <div class="intro-skip">click anywhere to skip</div>
+</header>
+
+<main class="page">
+  <div class="page-icon"><img src="/portrait.jpg" alt="Pranav Somalraju" width="400" height="400" /></div>
+  <h1 class="title" id="title" aria-label="Pranav Somalraju">Pranav Somalraju</h1>
+
+  <div class="tabs" role="tablist" aria-label="Sections" id="tabs">
+    <button class="tab" role="tab" id="t-home" aria-controls="v-home" data-tab="home">Home</button>
+    <button class="tab" role="tab" id="t-experience" aria-controls="v-experience" data-tab="experience">Experience</button>
+    <button class="tab" role="tab" id="t-projects" aria-controls="v-projects" data-tab="projects">Projects</button>
+    <span class="tab-ink" id="tab-ink" aria-hidden="true"></span>
+  </div>
+
+  <!-- HOME -->
+  <section class="view" id="v-home" role="tabpanel" aria-labelledby="t-home" data-view="home" hidden>
+    <div class="bio" id="bio">
+      <p class="lead">I'm a Computer Science and Neuroscience student at <span class="uni" tabindex="0">UNC Chapel Hill<span class="uni-logo" aria-hidden="true"></span></span>. I build <mark>machine learning and computer vision systems</mark>, with research experience at Duke and Caltech.</p>
+      <p class="lead">My interests sit between embodied AI and computational neuroscience. Specifically, how models perceive the world from <mark>raw sensor data</mark> and turn what they see <mark>into action</mark>. I like to think about the brain behind the AI, studying how biological perception works to design better learned representations, then using those models to <mark>understand our own brains in return</mark>.</p>
+    </div>
+
+    <h2 data-md="##">Recently</h2>
+    <ul class="updates">
+      <li><time class="ago" datetime="2026-10-04">oct 4</time><span><a class="go" href="#projects/gummi">Gummi<svg class="go-ic" viewBox="0 0 12 12" aria-hidden="true"><path d="M3.5 8.5 8.5 3.5M4.5 3.5h4v4"/></svg></a> won overall at WolfHacks 2026. It's a glucose coach that checks its own predictions.</span></li>
+      <li><time class="ago" datetime="2026-09-27">sep 27</time><span><a class="go" href="#projects/refuge">Refuge<svg class="go-ic" viewBox="0 0 12 12" aria-hidden="true"><path d="M3.5 8.5 8.5 3.5M4.5 3.5h4v4"/></svg></a> took 1st at the Carolina Data Challenge 2026. It simulates storms against real towns.</span></li>
+    </ul>
+
+
+    <h2 data-md="##">Say hello</h2>
+    <dl class="contact">
+      <dt>email</dt><dd><a href="mailto:somalrajupc@gmail.com">somalrajupc@gmail.com</a></dd>
+      <dt>github</dt><dd><a href="https://github.com/THEpranavsomalraju" target="_blank" rel="noopener">THEpranavsomalraju</a></dd>
+      <dt>linkedin</dt><dd><a href="https://linkedin.com/in/pranavsomalraju" target="_blank" rel="noopener">in/pranavsomalraju</a></dd>
+      <dt>phone</dt><dd><a href="tel:+19806220567">(980) 622-0567</a></dd>
+    </dl>
+    <blockquote>Pick whichever is easiest. I reply within a day, usually sooner.</blockquote>
+
+    <!-- live from /api/contributions; stays hidden if GitHub can't be reached -->
+    <div class="gh" id="gh" hidden></div>
+
+    <!-- live from /api/listening; stays hidden when Spotify isn't answering -->
+    <div class="ls" id="ls" hidden>
+      <div class="ls-head">
+        <h2 data-md="##">Listening</h2>
+        <div class="ls-nav"><button type="button" id="ls-prev" aria-label="Newer song">←</button><button type="button" id="ls-next" aria-label="Older song">→</button></div>
+      </div>
+      <div id="ls-car"></div>
+    </div>
+
+  </section>
+
+  <!-- EXPERIENCE -->
+  <section class="view" id="v-experience" role="tabpanel" aria-labelledby="t-experience" data-view="experience" hidden>
+    <ol class="tl" id="tl">
+      <li class="tl-i" style="--logo:url(/img/atc.svg);--brand:#56A0D3;--lh:36px;--ar:1.038">
+        <div class="tl-side"><span class="tl-logo" aria-hidden="true"><span class="logo"></span></span><span class="tl-when">sep 2026 — now</span></div>
+        <span class="tl-dot" aria-hidden="true"></span>
+        <div class="tl-body"><h3>App Team Carolina</h3><p><span class="role">Backend developer</span> Luminary team.</p></div>
+      </li>
+      <li class="tl-i" style="--logo:url(/img/caltech.png);--brand:#FF6C0C;--lh:23px;--ar:4.135">
+        <div class="tl-side"><span class="tl-logo" aria-hidden="true"><span class="logo"></span></span><span class="tl-when">dec 2025 — now</span></div>
+        <span class="tl-dot" aria-hidden="true"></span>
+        <div class="tl-body"><h3>Caltech</h3><p><span class="role">Research</span> Deep learning.</p></div>
+      </li>
+      <li class="tl-i" style="--logo:url(/img/duke.png);--brand:#012169;--brand-d:#5b84e6;--lh:30px;--ar:2.886">
+        <div class="tl-side"><span class="tl-logo" aria-hidden="true"><span class="logo"></span></span><span class="tl-when">sep 2024 — now</span></div>
+        <span class="tl-dot" aria-hidden="true"></span>
+        <div class="tl-body"><h3>Duke</h3><p><span class="role">Research</span> AI models for pathologists.</p></div>
+      </li>
+      <li class="tl-i" style="--lh:32px;--ar:1.876">
+        <div class="tl-side"><span class="tl-logo pic" aria-hidden="true"><img class="lt" src="/img/unchealth.svg" alt=""><img class="dk" src="/img/unchealth-dark.svg" alt=""></span><span class="tl-when">now</span></div>
+        <span class="tl-dot" aria-hidden="true"></span>
+        <div class="tl-body"><h3>UNC Health</h3><p><span class="role">Work</span> Medical assistant, part time.</p></div>
+      </li>
+      <li class="tl-i" style="--lh:44px;--ar:0.861">
+        <div class="tl-side"><span class="tl-logo pic" aria-hidden="true"><img src="/img/hms.svg" alt=""></span><span class="tl-when">earlier</span></div>
+        <span class="tl-dot" aria-hidden="true"></span>
+        <div class="tl-body"><h3>Harvard Medical School</h3><p><span class="role">Research</span></p></div>
+      </li>
+    </ol>
+  </section>
+
+  <!-- PROJECTS -->
+  <section class="view" id="v-projects" role="tabpanel" aria-labelledby="t-projects" data-view="projects" hidden>
+    <div class="wide">
+      <svg id="net" viewBox="0 0 1200 440" role="group" aria-label="The tools I use, feeding into the projects they made. Hover or focus a project to read about it."></svg>
+    </div>
+    <article class="detail" id="detail" aria-live="polite"></article>
+  </section>
+
+</main>
+
+<!-- command palette -->
+<div class="palette" id="palette" role="dialog" aria-modal="true" aria-label="Commands" hidden>
+  <div class="pal-box">
+    <div class="pal-in"><input id="pal-q" type="text" placeholder="Jump to a page, a project, or an action…" autocomplete="off" spellcheck="false" aria-controls="pal-list" /><kbd>esc</kbd></div>
+    <div class="pal-list" id="pal-list" role="listbox"></div>
+  </div>
 </div>
 
-<button class="toggle" id="toggle" aria-label="Switch theme">
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z"/></svg>
-</button>
-
-<div class="rail">
-  <a href="#top" data-t="top"><span>start here</span><i></i></a>
-  <a href="#work" data-t="work"><span>experience</span><i></i></a>
-  <a href="#projects" data-t="projects"><span>projects</span><i></i></a>
-  <a href="#contact" data-t="contact"><span>say hi</span><i></i></a>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<div class="ghost" id="ghost" aria-hidden="true">
+  <svg viewBox="0 0 16 20"><path d="M1 1v15l4-3.6 2.6 6 2.4-1-2.6-5.9H13z"/></svg>
+  <span>pranav</span>
 </div>
+<div class="ghost-sel" id="ghost-sel" aria-hidden="true"></div>
 
-<section id="top">
-  <div class="wrap">
-    <div class="hero-grid">
-      <div>
-        <div class="hello scribble fade"><span class="wave">👋</span> hello, i'm</div>
-        <h1>
-          <span class="line"><span>Pranav</span></span>
-          <span class="line l2"><span>Somalraju.</span></span>
-        </h1>
-        <svg class="underline" viewBox="0 0 340 18" aria-hidden="true"><path d="M4 12C58 5 120 4 176 8s110 6 160 2"/></svg>
-        <div class="socials fade f2">
-          <a class="btn primary" href="#projects"><em>see my work</em></a>
-          <a class="btn" href="#contact"><em>say hi</em></a>
-        </div>
-      </div>
-
-      <div class="stack fade f2" id="stack">
-        <span class="sticker top">that's me</span>
-
-        <!-- filled in by /api/now-playing; stays hidden if that isn't set up -->
-        <a class="sticker np" id="np" target="_blank" rel="noopener noreferrer" hidden>
-          <span class="np-tip" id="np-tip" aria-hidden="true"></span>
-          <span class="eq" aria-hidden="true"><i></i><i></i><i></i></span>
-          <span class="np-song" id="np-song"></span>
-        </a>
-
-        <div class="portrait" id="portrait">
-          <img src="portrait.jpg" alt="Pranav Somalraju" />
-        </div>
-        <span class="sticker bottom">chapel hill, nc</span>
-      </div>
-    </div>
-  </div>
-  <a class="scrolldown" id="scrolldown" href="#work" aria-label="scroll down to see more">
-    <svg viewBox="0 0 24 14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2 2l10 10L22 2"/></svg>
-  </a>
-</section>
-
-<div class="band"><div class="track" data-dir="1">
-  <span>deep learning</span><i></i><span>ai</span><i></i><span>python</span><i></i><span>neural networks</span><i></i>
-</div></div>
-
-<section id="work">
-  <div class="wrap">
-    <div class="head rev"><span class="label">where i've been</span><span class="scribble">one forward pass</span><span class="rule"></span></div>
-
-    <!-- the signal threading down the timeline; path + stops are measured in JS -->
-    <svg class="spine" aria-hidden="true">
-      <path class="thread"></path>
-      <path class="thread lit"></path>
-      <circle class="pulse" r="4.5"></circle>
-    </svg>
-
-    <div class="row">
-      <div class="text">
-        <span class="year">present</span>
-        <p>I study <span class="hl">computer science and neuroscience</span> at <span class="hl">UNC Chapel Hill</span>.</p>
-      </div>
-      <div class="figure"><div class="plate"><div class="inner"><img class="plate-logo" src="img/unc.png" alt="UNC Chapel Hill" /></div></div></div>
-    </div>
-
-    <div class="row">
-      <div class="text">
-        <span class="year">dec 2025 — now</span>
-        <p>I research <span class="hl">deep learning</span> at <span class="hl">Caltech</span>.</p>
-      </div>
-      <div class="figure"><div class="plate"><div class="inner"><img class="plate-logo wordmark" src="img/caltech.png" alt="Caltech" /></div></div></div>
-    </div>
-
-    <div class="row">
-      <div class="text">
-        <span class="year">sep 2024 — now</span>
-        <p>I create <span class="hl">AI models for pathologists</span> at <span class="hl">Duke</span>.</p>
-      </div>
-      <div class="figure"><div class="plate"><div class="inner"><img class="plate-logo wordmark" src="img/duke.png" alt="Duke" /></div></div></div>
-    </div>
-
-    <div class="footnote rev">
-      <svg viewBox="0 0 60 48" aria-hidden="true"><path d="M6 6c2 16 10 27 26 31M32 37l-8 3M32 37l-2-8M40 12c6 4 10 10 12 18"/></svg>
-      <span>I also researched at <b>Harvard Medical School</b>, and I currently work part time as a medical assistant at <b>UNC Health</b>.</span>
-    </div>
-  </div>
-</section>
-
-<div class="band"><div class="track" data-dir="-1">
-  <span>projects</span><i></i><span>open source</span><i></i><span>things i made</span><i></i>
-</div></div>
-
-<section id="projects">
-  <div class="wrap">
-    <div class="head rev"><span class="label">stuff i built</span><span class="scribble">tap an output node</span><span class="rule"></span><a class="scribble" href="https://github.com/THEpranavsomalraju">all of it on github →</a></div>
-    <div class="net">
-    <div class="graphwrap">
-      <svg class="graph" viewBox="34 4 1150 442" aria-label="projects network">
-      <text class="layerlab" id="lab-in" y="26" text-anchor="middle">what i use</text>
-      
-      <text class="layerlab" id="lab-out" y="26" text-anchor="middle">what it made</text>
-      <path class="edge e-i0-a0" d="M120 76 C246.0 76, 274.0 95, 400 95"/><path class="edge e-i0-a1" d="M120 76 C246.0 76, 274.0 185, 400 185"/><path class="edge e-i0-a2" d="M120 76 C246.0 76, 274.0 275, 400 275"/><path class="edge e-i0-a3" d="M120 76 C246.0 76, 274.0 365, 400 365"/><path class="edge e-i1-a0" d="M120 131 C246.0 131, 274.0 95, 400 95"/><path class="edge e-i1-a1" d="M120 131 C246.0 131, 274.0 185, 400 185"/><path class="edge e-i1-a2" d="M120 131 C246.0 131, 274.0 275, 400 275"/><path class="edge e-i1-a3" d="M120 131 C246.0 131, 274.0 365, 400 365"/><path class="edge e-i2-a0" d="M120 186 C246.0 186, 274.0 95, 400 95"/><path class="edge e-i2-a1" d="M120 186 C246.0 186, 274.0 185, 400 185"/><path class="edge e-i2-a2" d="M120 186 C246.0 186, 274.0 275, 400 275"/><path class="edge e-i2-a3" d="M120 186 C246.0 186, 274.0 365, 400 365"/><path class="edge e-i3-a0" d="M120 241 C246.0 241, 274.0 95, 400 95"/><path class="edge e-i3-a1" d="M120 241 C246.0 241, 274.0 185, 400 185"/><path class="edge e-i3-a2" d="M120 241 C246.0 241, 274.0 275, 400 275"/><path class="edge e-i3-a3" d="M120 241 C246.0 241, 274.0 365, 400 365"/><path class="edge e-i4-a0" d="M120 296 C246.0 296, 274.0 95, 400 95"/><path class="edge e-i4-a1" d="M120 296 C246.0 296, 274.0 185, 400 185"/><path class="edge e-i4-a2" d="M120 296 C246.0 296, 274.0 275, 400 275"/><path class="edge e-i4-a3" d="M120 296 C246.0 296, 274.0 365, 400 365"/><path class="edge e-i5-a0" d="M120 351 C246.0 351, 274.0 95, 400 95"/><path class="edge e-i5-a1" d="M120 351 C246.0 351, 274.0 185, 400 185"/><path class="edge e-i5-a2" d="M120 351 C246.0 351, 274.0 275, 400 275"/><path class="edge e-i5-a3" d="M120 351 C246.0 351, 274.0 365, 400 365"/><path class="edge e-i6-a0" d="M120 406 C246.0 406, 274.0 95, 400 95"/><path class="edge e-i6-a1" d="M120 406 C246.0 406, 274.0 185, 400 185"/><path class="edge e-i6-a2" d="M120 406 C246.0 406, 274.0 275, 400 275"/><path class="edge e-i6-a3" d="M120 406 C246.0 406, 274.0 365, 400 365"/><path class="edge e-a0-b0" d="M400 95 C521.5 95, 548.5 140, 670 140"/><path class="edge e-a0-b1" d="M400 95 C521.5 95, 548.5 240, 670 240"/><path class="edge e-a0-b2" d="M400 95 C521.5 95, 548.5 340, 670 340"/><path class="edge e-a1-b0" d="M400 185 C521.5 185, 548.5 140, 670 140"/><path class="edge e-a1-b1" d="M400 185 C521.5 185, 548.5 240, 670 240"/><path class="edge e-a1-b2" d="M400 185 C521.5 185, 548.5 340, 670 340"/><path class="edge e-a2-b0" d="M400 275 C521.5 275, 548.5 140, 670 140"/><path class="edge e-a2-b1" d="M400 275 C521.5 275, 548.5 240, 670 240"/><path class="edge e-a2-b2" d="M400 275 C521.5 275, 548.5 340, 670 340"/><path class="edge e-a3-b0" d="M400 365 C521.5 365, 548.5 140, 670 140"/><path class="edge e-a3-b1" d="M400 365 C521.5 365, 548.5 240, 670 240"/><path class="edge e-a3-b2" d="M400 365 C521.5 365, 548.5 340, 670 340"/><path class="edge e-b0-o0" d="M670 140 C787.0 140, 813.0 76, 930 76"/><path class="edge e-b0-o1" d="M670 140 C787.0 140, 813.0 142, 930 142"/><path class="edge e-b0-o2" d="M670 140 C787.0 140, 813.0 208, 930 208"/><path class="edge e-b0-o3" d="M670 140 C787.0 140, 813.0 274, 930 274"/><path class="edge e-b0-o4" d="M670 140 C787.0 140, 813.0 340, 930 340"/><path class="edge e-b0-o5" d="M670 140 C787.0 140, 813.0 406, 930 406"/><path class="edge e-b1-o0" d="M670 240 C787.0 240, 813.0 76, 930 76"/><path class="edge e-b1-o1" d="M670 240 C787.0 240, 813.0 142, 930 142"/><path class="edge e-b1-o2" d="M670 240 C787.0 240, 813.0 208, 930 208"/><path class="edge e-b1-o3" d="M670 240 C787.0 240, 813.0 274, 930 274"/><path class="edge e-b1-o4" d="M670 240 C787.0 240, 813.0 340, 930 340"/><path class="edge e-b1-o5" d="M670 240 C787.0 240, 813.0 406, 930 406"/><path class="edge e-b2-o0" d="M670 340 C787.0 340, 813.0 76, 930 76"/><path class="edge e-b2-o1" d="M670 340 C787.0 340, 813.0 142, 930 142"/><path class="edge e-b2-o2" d="M670 340 C787.0 340, 813.0 208, 930 208"/><path class="edge e-b2-o3" d="M670 340 C787.0 340, 813.0 274, 930 274"/><path class="edge e-b2-o4" d="M670 340 C787.0 340, 813.0 340, 930 340"/><path class="edge e-b2-o5" d="M670 340 C787.0 340, 813.0 406, 930 406"/>
-      <g class="node n-hid a0"><circle cx="400" cy="95" r="7.5"/></g><g class="node n-hid a1"><circle cx="400" cy="185" r="7.5"/></g><g class="node n-hid a2"><circle cx="400" cy="275" r="7.5"/></g><g class="node n-hid a3"><circle cx="400" cy="365" r="7.5"/></g><g class="node n-hid b0"><circle cx="670" cy="140" r="7.5"/></g><g class="node n-hid b1"><circle cx="670" cy="240" r="7.5"/></g><g class="node n-hid b2"><circle cx="670" cy="340" r="7.5"/></g>
-      <g class="node n-in i0"><circle cx="120" cy="76" r="9"/><text x="98" y="81" text-anchor="end">python</text></g><g class="node n-in i1"><circle cx="120" cy="131" r="9"/><text x="98" y="136" text-anchor="end">pandas</text></g><g class="node n-in i2"><circle cx="120" cy="186" r="9"/><text x="98" y="191" text-anchor="end">sql</text></g><g class="node n-in i3"><circle cx="120" cy="241" r="9"/><text x="98" y="246" text-anchor="end">scikit-learn</text></g><g class="node n-in i4"><circle cx="120" cy="296" r="9"/><text x="98" y="301" text-anchor="end">pytorch</text></g><g class="node n-in i5"><circle cx="120" cy="351" r="9"/><text x="98" y="356" text-anchor="end">computer vision</text></g><g class="node n-in i6"><circle cx="120" cy="406" r="9"/><text x="98" y="411" text-anchor="end">apis</text></g>
-      <g class="node out o0" data-i="0" role="button" tabindex="0" aria-label="Gummi">
-      <circle class="ring" cx="930" cy="76" r="27"/>
-      <circle class="body" cx="930" cy="76" r="25"/>
-      <text class="num" x="930" y="83" text-anchor="middle">01</text>
-      <text class="cap" x="976" y="83">Gummi</text>
-    </g><g class="node out o1" data-i="1" role="button" tabindex="0" aria-label="Refuge">
-      <circle class="ring" cx="930" cy="142" r="27"/>
-      <circle class="body" cx="930" cy="142" r="25"/>
-      <text class="num" x="930" y="149" text-anchor="middle">02</text>
-      <text class="cap" x="976" y="149">Refuge</text>
-    </g><g class="node out o2" data-i="2" role="button" tabindex="0" aria-label="EyeCode">
-      <circle class="ring" cx="930" cy="208" r="27"/>
-      <circle class="body" cx="930" cy="208" r="25"/>
-      <text class="num" x="930" y="215" text-anchor="middle">03</text>
-      <text class="cap" x="976" y="215">EyeCode</text>
-    </g><g class="node out o3" data-i="3" role="button" tabindex="0" aria-label="Clinician GUI">
-      <circle class="ring" cx="930" cy="274" r="27"/>
-      <circle class="body" cx="930" cy="274" r="25"/>
-      <text class="num" x="930" y="281" text-anchor="middle">04</text>
-      <text class="cap" x="976" y="281">Clinician GUI</text>
-    </g><g class="node out o4" data-i="4" role="button" tabindex="0" aria-label="Rejection Classifier">
-      <circle class="ring" cx="930" cy="340" r="27"/>
-      <circle class="body" cx="930" cy="340" r="25"/>
-      <text class="num" x="930" y="347" text-anchor="middle">05</text>
-      <text class="cap" x="976" y="347">Rejection Classifier</text>
-    </g><g class="node out o5" data-i="5" role="button" tabindex="0" aria-label="Card Dispute PRD">
-      <circle class="ring" cx="930" cy="406" r="27"/>
-      <circle class="body" cx="930" cy="406" r="25"/>
-      <text class="num" x="930" y="413" text-anchor="middle">06</text>
-      <text class="cap" x="976" y="413">Card Dispute PRD</text>
-    </g>
-    </svg>
-    </div>
-      <div class="panel" id="panel">
-        <span class="n" id="p-n">01</span>
-        <h3 id="p-t">EyeCode</h3>
-        <p id="p-d"></p>
-        <div class="tags" id="p-tags"></div>
-        <a class="visit" id="p-link" href="https://github.com/THEpranavsomalraju"><span id="p-link-label">open on github</span> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M7 17L17 7M9 7h8v8"/></svg></a>
-      </div>
-  </div>
-</section>
-
-<div class="band"><div class="track" data-dir="1">
-  <span>say hello</span><i></i><span>reach me anywhere</span><i></i><span>contact</span><i></i>
-</div></div>
-
-<section id="contact">
-  <div class="wrap contact">
-    <div class="rev">
-      <h2>Say hello.</h2>
-      <p>Pick whichever is easiest. I reply within a day, usually sooner.</p>
-    </div>
-    <div class="links stagger">
-      <a class="link" href="mailto:somalrajupc@gmail.com" aria-label="email">
-        <span class="fill"></span><span class="tip">email me</span>
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="4"/><path d="M3 7.5l9 6 9-6"/></svg>
-      </a>
-      <a class="link" href="https://github.com/THEpranavsomalraju" aria-label="github">
-        <span class="fill"></span><span class="tip">my code</span>
-        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5a12 12 0 00-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.9 1.2 1.9 1.2 1.1 1.9 2.9 1.3 3.6 1 .1-.8.4-1.3.8-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 016 0c2.3-1.5 3.3-1.2 3.3-1.2.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0012 .5z"/></svg>
-      </a>
-      <a class="link" href="https://linkedin.com/in/pranavsomalraju" aria-label="linkedin">
-        <span class="fill"></span><span class="tip">the professional one</span>
-        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M4.98 3.5a2.5 2.5 0 11-.02 5 2.5 2.5 0 01.02-5zM3 9h4v12H3zM10 9h3.8v1.7h.05c.53-.95 1.83-1.95 3.77-1.95C21.4 8.75 22 11 22 14.1V21h-4v-6.1c0-1.45-.03-3.3-2.05-3.3-2.05 0-2.37 1.57-2.37 3.2V21h-4z"/></svg>
-      </a>
-      <a class="link" href="tel:+19806220567" aria-label="phone">
-        <span class="fill"></span><span class="tip">(980) 622-0567</span>
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 01-2.2 2 19.8 19.8 0 01-8.6-3.1 19.5 19.5 0 01-6-6A19.8 19.8 0 012.1 4.2 2 2 0 014.1 2h3a2 2 0 012 1.7c.1 1 .4 1.9.7 2.8a2 2 0 01-.5 2.1L8.1 9.9a16 16 0 006 6l1.3-1.2a2 2 0 012.1-.5c.9.3 1.8.6 2.8.7a2 2 0 011.7 2z"/></svg>
-      </a>
-    </div>
-  </div>
-</section>
-<script src="js/script.js"></script>
+<script src="/js/skyline.js"></script>
+<script src="/js/squeeze.js"></script>
+<script src="/js/app.js"></script>
 </body>
 </html>

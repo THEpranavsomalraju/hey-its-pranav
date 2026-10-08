@@ -49,7 +49,7 @@ const root=document.documentElement;
 const themeNow=()=>root.dataset.theme||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');
 function syncThemeBtn(){$('#theme').innerHTML=svgIcon(themeNow()==='dark'?SUN:MOON)}
 function setTheme(t,x=innerWidth-40,y=22){
-  const apply=()=>{root.dataset.theme=t;store.set('v2-theme',t);syncThemeBtn()};
+  const apply=()=>{root.dataset.theme=t;store.set('theme',t);syncThemeBtn()};
   if(!document.startViewTransition||reduce){apply();return}
   const vt=document.startViewTransition(apply);
   vt.ready.then(()=>{

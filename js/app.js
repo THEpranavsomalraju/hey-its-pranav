@@ -107,7 +107,6 @@ function setTab(name,{instant=false}={}){
     if(on&&!instant&&!reduce){void v.offsetWidth;v.classList.add('enter')}
   });
   moveInk(instant);
-  $('#crumb').textContent=TABS[name];
   document.title=name==='home'?'Pranav Somalraju':`${TABS[name]} · Pranav Somalraju`;
   if(name==='experience')timeline.run();
   if(name==='projects')net.enter(); else net.leave();

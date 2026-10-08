@@ -49,17 +49,11 @@ kbd{font:500 11px/1 var(--mono);padding:3px 5px;border-radius:4px;border:1px sol
 .ic{width:16px;height:16px;flex:none;display:inline-block;vertical-align:-3px}
 
 /* ───────────────────────── top bar ───────────────────────── */
-.topbar{position:sticky;top:0;z-index:30;height:46px;display:flex;align-items:center;justify-content:space-between;
+.topbar{position:sticky;top:0;z-index:30;height:46px;display:flex;align-items:center;justify-content:flex-end;
   padding:0 12px;background:color-mix(in srgb,var(--bg) 82%,transparent);
   backdrop-filter:saturate(1.4) blur(12px);-webkit-backdrop-filter:saturate(1.4) blur(12px);
   border-bottom:1px solid transparent;transition:border-color .25s}
 .topbar.scrolled{border-color:var(--line)}
-.crumbs{display:flex;align-items:center;gap:2px;min-width:0;font-size:14px}
-.crumb{display:inline-flex;align-items:center;gap:8px;padding:3px 7px;border-radius:6px;white-space:nowrap;transition:background .15s}
-a.crumb:hover{background:var(--hover)}
-.slash{color:var(--faint);padding:0 1px}
-.mono-p{width:19px;height:19px;border-radius:5px;background:var(--ink);color:var(--bg);display:grid;place-items:center;
-  font:italic 400 15px/1 var(--serif);padding-top:1px}
 .tb-right{display:flex;align-items:center;gap:4px}
 .edited{font-size:13px;color:var(--muted);margin-right:8px;white-space:nowrap}
 .tb-btn{display:inline-flex;align-items:center;gap:7px;height:30px;padding:0 6px;border-radius:6px;color:var(--muted);transition:background .15s,color .15s}
@@ -331,7 +325,7 @@ blockquote{margin:26px 0 0;padding:0 0 0 14px;border-left:2px solid var(--ink);c
 /* ───────────────────────── small screens ───────────────────────── */
 @media (max-width:760px){
   .page{padding:0 18px 64px}
-  .edited,.crumb-name{display:none}
+  .edited{display:none}
   .lead{font-size:17px}
   .tl::before{left:7px;top:10px}
   .tl-i{grid-template-columns:15px 1fr auto;column-gap:14px;padding-bottom:30px}

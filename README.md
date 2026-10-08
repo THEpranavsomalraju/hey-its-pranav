@@ -17,8 +17,8 @@ Plain HTML, CSS, and vanilla JS. No build step and no dependencies; the only ser
 - `api/listening.js` — Vercel function returning the current Spotify track and recently played ones, with album art
 - `scripts/spotify-token.mjs` — one-time local helper that mints the Spotify refresh token
 - `portrait.jpg` — the portrait at the top of the page
-- `img/` — the timeline logos (cropped to their visible edges; `unchealth-dark.svg` is the reversed mark for dark mode) and `og.png`, the 1200×630 social share card
-- `favicon.ico`, `favicon-32.png`, `apple-touch-icon.png` — the **P** monogram
+- `img/` — the timeline logos (cropped to their visible edges; `unchealth-dark.svg` is the reversed mark for dark mode) and `card.png`, the 1200×630 social share card
+- `favicon.svg`, `favicon.ico`, `favicon-32.png`, `apple-touch-icon.png` — the **ps** monogram. The SVG reverses itself in dark browsers; the rasters are the ink tile, and the touch icon is full-bleed because iOS rounds it
 
 `api/` is CommonJS on purpose: with no `package.json` a `.js` file is CJS on Vercel, so an ESM `export default` would fail at runtime. The local helper is `.mjs` and is therefore unambiguously ESM.
 

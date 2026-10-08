@@ -32,8 +32,6 @@
 <main class="page">
   <div class="page-icon"><img src="../portrait.jpg" alt="Pranav Somalraju" width="400" height="400" /></div>
   <h1 class="title" id="title" aria-label="Pranav Somalraju">Pranav Somalraju</h1>
-  <!-- filled by /api/now-playing; stays hidden when that isn't answering -->
-  <a class="np" id="np" target="_blank" rel="noopener noreferrer" hidden><span class="eq" aria-hidden="true"><i></i><i></i><i></i></span><span id="np-t"></span></a>
 
   <div class="tabs" role="tablist" aria-label="Sections" id="tabs">
     <button class="tab" role="tab" id="t-home" aria-controls="v-home" data-tab="home">Home</button>
@@ -52,6 +50,15 @@
       <li><a href="#projects/gummi">Gummi</a> won overall at WolfHacks 2026. It's a glucose coach that checks its own predictions.</li>
       <li><a href="#projects/refuge">Refuge</a> took 1st at the Carolina Data Challenge 2026. It simulates storms against real towns.</li>
     </ul>
+
+    <!-- live from /api/listening; stays hidden when Spotify isn't answering -->
+    <div class="ls" id="ls" hidden>
+      <div class="ls-head">
+        <h2 data-md="##">Listening</h2>
+        <div class="ls-nav"><button type="button" id="ls-prev" aria-label="Newer song">←</button><button type="button" id="ls-next" aria-label="Older song">→</button></div>
+      </div>
+      <div id="ls-car"></div>
+    </div>
 
     <h2 data-md="##">Say hello</h2>
     <dl class="contact">
@@ -130,6 +137,7 @@
 <div class="ghost-sel" id="ghost-sel" aria-hidden="true"></div>
 
 <script src="skyline.js"></script>
+<script src="squeeze.js"></script>
 <script src="app.js"></script>
 </body>
 </html>

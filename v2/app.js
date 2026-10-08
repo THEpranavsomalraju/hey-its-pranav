@@ -342,22 +342,40 @@ document.addEventListener('keydown',e=>{
   if(n)location.hash=n;
 });
 
-// ───────────────────────── now playing ─────────────────────────
+// ───────────────────────── listening ─────────────────────────
+// what's on now, then what played before it, from /api/listening. new songs
+// slide in only while nobody's browsing the older ones.
 (function(){
-  const a=$('#np');let shown='';
+  const box=$('#ls'),host=$('#ls-car');let car=null,shown='';
+  const ago=iso=>{
+    const s=(Date.now()-new Date(iso))/1000;
+    if(!(s>=0))return'';
+    if(s<90)return'just now';if(s<3600)return Math.round(s/60)+'m ago';if(s<86400)return Math.round(s/3600)+'h ago';
+    if(s<172800)return'yesterday';return new Date(iso).toLocaleDateString('en-US',{month:'short',day:'numeric'});
+  };
+  const toSlides=tracks=>tracks.map(t=>({
+    title:t.title,
+    description:t.artist+(t.album&&t.album!==t.title?' · '+t.album:''),
+    image:t.image,imageAlt:'Cover of '+(t.album||t.title),
+    overlay:t.playing?'<span class="eq"><i></i><i></i><i></i></span>now playing':esc(ago(t.playedAt)),
+    action:t.url?'Play on Spotify':null,href:t.url
+  }));
   function load(){
-    fetch('/api/now-playing',{headers:{accept:'application/json'},cache:'no-store'})
+    fetch('/api/listening',{headers:{accept:'application/json'},cache:'no-store'})
       .then(r=>r.ok?r.json():null)
       .then(d=>{
-        if(!d||!d.title)return;
-        const line=(d.playing?'listening to ':'last played ')+d.title+(d.artist?' — '+d.artist:'');
-        if(line===shown)return;shown=line;
-        $('#np-t').textContent=line;a.title=line;a.classList.toggle('past',!d.playing);
-        if(typeof d.url==='string'&&d.url.startsWith('https://open.spotify.com/'))a.href=d.url;else a.removeAttribute('href');
-        a.hidden=false;
+        if(!d||!Array.isArray(d.tracks)||!d.tracks.length)return;
+        const key=d.tracks.map(t=>t.id+(t.playing?'*':'')).join();
+        if(key===shown||(car&&car.busy))return;
+        shown=key;box.hidden=false;
+        const slides=toSlides(d.tracks);
+        if(car){car.setSlides(slides);return}
+        car=window.SqueezeCarousel.mount(host,{slides,aspect:1,label:'Songs I played recently'});
+        $('#ls-prev').addEventListener('click',()=>car.step(-1));
+        $('#ls-next').addEventListener('click',()=>car.step(1));
       }).catch(()=>{});
   }
-  load();setInterval(load,20000);
+  load();setInterval(()=>{if(!document.hidden)load()},30000);
   document.addEventListener('visibilitychange',()=>{if(!document.hidden)load()});
 })();
 

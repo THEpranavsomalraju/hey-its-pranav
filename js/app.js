@@ -145,7 +145,7 @@ const net=(()=>{
   const spread=(n,lo,hi)=>Array.from({length:n},(_,i)=>Math.round(lo+i*(hi-lo)/(n-1)));
   const IY=spread(INPUTS.length,52,412),AY=spread(4,112,352),BY=spread(3,152,312),OY=spread(PROJECTS.length,60,404);
   const d=(x1,y1,x2,y2)=>{const k=.45*(x2-x1);return `M${x1} ${y1} C${x1+k} ${y1}, ${x2-k} ${y2}, ${x2} ${y2}`};
-  let edges=[],outs=[],sel=0,hover=false,active=false,built=false,sparkT,sparking=false;
+  let edges=[],outs=[],sel=0,hover=false,built=false;
   const q=s=>svg.querySelector(s);
 
   // wide on a desktop; on a phone the layers tuck in and the projects go
@@ -166,10 +166,10 @@ const net=(()=>{
       h+=`<g class="node ni i${i}" data-i="${i}"><circle cx="${XI}" cy="${y}" r="6"/><text x="${XI-16}" y="${y+5}" text-anchor="end">${esc(t)}</text></g>`});
     PROJECTS.forEach((p,k)=>{const y=OY[k];
       h+=`<g class="node no o${k}" data-o="${k}" tabindex="0" role="button" aria-label="${esc(p.t)}">
-        <circle class="ring" cx="${XO}" cy="${y}" r="17"/><circle class="body" cx="${XO}" cy="${y}" r="17"/>
+        <circle class="body" cx="${XO}" cy="${y}" r="17"/>
         <text class="num" x="${XO}" y="${y+4.2}" text-anchor="middle">${String(k+1).padStart(2,'0')}</text>
         ${c?'':`<text class="name" x="${XO+32}" y="${y+6}">${esc(p.t)}</text>`}</g>`});
-    svg.innerHTML=h+`<circle class="spark" r="3.2" cx="${XI}" cy="${IY[0]}" opacity="0"/>`;
+    svg.innerHTML=h;
     edges=$$('.edge',svg);outs=$$('.no',svg);
     fit();show(sel);
   }
@@ -250,37 +250,12 @@ const net=(()=>{
     });
   }
 
-  // nobody's touching it? a single signal slips through now and then
-  function spark(){
-    if(!active||hover||document.hidden||reduce){schedule();return}
-    const k=Math.floor(Math.random()*PROJECTS.length),p=PROJECTS[k];
-    const pick=a=>a[Math.floor(Math.random()*a.length)];
-    const i=pick(p.feeds),j=pick(p.a),m=pick(p.b);
-    const segs=[q(`.e-i${i}-a${j}`),q(`.e-a${j}-b${m}`),q(`.e-b${m}-o${k}`)];
-    const dot=q('.spark');sparking=true;
-    const SEG=520;let s=0,t0=null;
-    function step(ts){
-      if(!active||hover||!dot.isConnected){if(dot.isConnected)dot.setAttribute('opacity',0);sparking=false;schedule();return}
-      if(t0==null)t0=ts;
-      let u=(ts-t0)/SEG;
-      if(u>=1){s++;t0=ts;u=0;if(s>=segs.length){
-        dot.setAttribute('opacity',0);
-        const r=outs[k].querySelector('.ring');r.classList.remove('ping');void r.getBBox();r.classList.add('ping');
-        sparking=false;schedule();return}}
-      const e=segs[s],L=e.getTotalLength(),pt=e.getPointAtLength(L*(u<.5?2*u*u:1-Math.pow(-2*u+2,2)/2));
-      dot.setAttribute('cx',pt.x);dot.setAttribute('cy',pt.y);dot.setAttribute('opacity',1);
-      requestAnimationFrame(step);
-    }
-    requestAnimationFrame(step);
-  }
-  function schedule(){clearTimeout(sparkT);if(active)sparkT=setTimeout(spark,2600+Math.random()*3400)}
-
   draw();render(sel,false);
   narrow.addEventListener('change',draw);
   if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>requestAnimationFrame(fit));
   return{
-    enter(){active=true;fit();if(!built)build();if(!sparking)schedule()},
-    leave(){active=false;clearTimeout(sparkT)},
+    enter(){fit();if(!built)build()},
+    leave(){},
     select,
     step(dir){select((sel+dir+PROJECTS.length)%PROJECTS.length)}
   };

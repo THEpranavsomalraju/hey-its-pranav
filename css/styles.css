@@ -271,10 +271,6 @@ blockquote{margin:26px 0 0;padding:0 0 0 14px;border-left:2px solid var(--ink);c
 #net .no.on .num{fill:var(--bg)}
 #net .no.on .name,#net .no:hover .name{fill:var(--ink)}
 #net .no:focus-visible .body{stroke-width:3}
-#net .ring{fill:none;stroke:var(--ink);stroke-width:1;opacity:0;transform-box:fill-box;transform-origin:center}
-#net .ring.ping{animation:ping .9s var(--ease)}
-@keyframes ping{0%{opacity:.7;transform:scale(1)}100%{opacity:0;transform:scale(2)}}
-#net .spark{fill:var(--ink)}
 
 .detail{margin-top:18px;padding-top:26px;border-top:1px solid var(--line);min-height:300px}
 .detail.swap>*{animation:fade .35s ease both}

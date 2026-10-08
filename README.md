@@ -2,7 +2,7 @@
 
 Pranav Somalraju's personal site — a single-page portfolio covering education, research, projects, and contact info.
 
-Live at **https://pranavsomalraju.vercel.app**
+Live at **https://pranavsomalraju.dev**
 
 Plain HTML, CSS, and vanilla JS. No build step and no dependencies; the only server-side piece is one Vercel function that reads Spotify.
 

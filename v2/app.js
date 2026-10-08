@@ -400,7 +400,7 @@ $$('time.ago').forEach(t=>{
         if(key===shown)return;shown=key;
         host.hidden=false;
         if(sky)sky.setData(d.days);
-        else sky=window.ContributionSkyline.mount(host,{data:d.days,palette:'mono'});
+        else sky=window.ContributionSkyline.mount(host,{data:d.days,palette:'github'});
       }).catch(()=>{});
   }
   load();setInterval(()=>{if(!document.hidden)load()},10*60*1000);
@@ -435,6 +435,68 @@ $$('time.ago').forEach(t=>{
     if(Math.random()<.7)setTimeout(()=>burst(n-1),50);
     if(Math.random()<.7)setTimeout(()=>burst(n+1),50);
   }));
+})();
+
+// ───────────────────────── every other letter, too ─────────────────────────
+// pass over any text and the letters under the pointer fall to signal for a
+// beat. the real letter stays where it is, just transparent, with the glyph
+// drawn over it, so nothing on the line moves and the text is never changed.
+(function(){
+  if(reduce)return;
+  const GLYPHS='01#/<>{}*+=%$';
+  const SKIP='input,textarea,select,svg,canvas,script,style,kbd,#title,.scr,.palette,[contenteditable]';
+  const caretAt=(x,y)=>{
+    if(document.caretPositionFromPoint){const p=document.caretPositionFromPoint(x,y);return p&&{node:p.offsetNode,offset:p.offset}}
+    if(document.caretRangeFromPoint){const r=document.caretRangeFromPoint(x,y);return r&&{node:r.startContainer,offset:r.startOffset}}
+    return null;
+  };
+  const range=document.createRange();
+  const under=(node,i,x,y)=>{
+    if(i<0||i>=node.length)return false;
+    range.setStart(node,i);range.setEnd(node,i+1);
+    const b=range.getBoundingClientRect();
+    return x>=b.left&&x<=b.right&&y>=b.top&&y<=b.bottom;
+  };
+  function wrap(node,i){
+    if(!node.parentNode||i<0||i>=node.length||/\s/.test(node.data[i]))return null;
+    const ch=node.splitText(i);ch.splitText(1);
+    const s=document.createElement('span');s.className='scr';
+    ch.parentNode.insertBefore(s,ch);s.appendChild(ch);
+    s.style.setProperty('--sc',getComputedStyle(s.parentElement).color);
+    return s;
+  }
+  function scramble(s){
+    let ticks=0;const stop=4+Math.floor(Math.random()*5);
+    s.dataset.g=GLYPHS[Math.floor(Math.random()*GLYPHS.length)];
+    const iv=setInterval(()=>{
+      if(ticks++<stop){s.dataset.g=GLYPHS[Math.floor(Math.random()*GLYPHS.length)];return}
+      clearInterval(iv);
+      const p=s.parentNode;if(!p)return;
+      p.replaceChild(s.firstChild,s);p.normalize();
+    },48);
+  }
+  let raf=0,ev=null,last=0;
+  document.addEventListener('pointermove',e=>{
+    if(e.pointerType!=='mouse')return;
+    ev=e;if(!raf)raf=requestAnimationFrame(tick);
+  },{passive:true});
+  function tick(){
+    raf=0;const now=performance.now();
+    if(now-last<30||!ev)return;
+    const c=caretAt(ev.clientX,ev.clientY);
+    if(!c||!c.node||c.node.nodeType!==3)return;
+    const el=c.node.parentElement;
+    if(!el||el.closest(SKIP))return;
+    // the caret lands between letters; take whichever side the pointer is actually on
+    const i=under(c.node,c.offset,ev.clientX,ev.clientY)?c.offset:under(c.node,c.offset-1,ev.clientX,ev.clientY)?c.offset-1:-1;
+    if(i<0)return;
+    last=now;
+    const node=c.node,picks=[i];
+    if(Math.random()<.7)picks.push(i+1);
+    if(Math.random()<.7)picks.push(i-1);
+    // right to left, so splitting one letter off never shifts the next index
+    picks.sort((a,b)=>b-a).forEach(k=>{const s=wrap(node,k);if(s)scramble(s)});
+  }
 })();
 
 // ───────────────────────── a second cursor ─────────────────────────

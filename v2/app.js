@@ -8,84 +8,35 @@ const store={
   set(k,v){try{localStorage.setItem(k,v)}catch(e){}}
 };
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-
-// ───────────────────────── icons ─────────────────────────
-const ICONS={
-  home:'<path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M10 21v-6h4v6"/>',
-  briefcase:'<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M3 13h18"/>',
-  network:'<circle cx="5" cy="6" r="2"/><circle cx="5" cy="18" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/><path d="M6.8 7.2 10.3 11M6.8 16.8l3.5-3.8M14 12h3"/>',
-  pin:'<path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/>',
-  cap:'<path d="M2 9.5 12 5l10 4.5L12 14z"/><path d="M6 11.5V16c0 1.4 2.7 3 6 3s6-1.6 6-3v-4.5"/><path d="M22 9.5V15"/>',
-  flask:'<path d="M9 3h6"/><path d="M10 3v6.2L4.6 18.6A1.6 1.6 0 0 0 6 21h12a1.6 1.6 0 0 0 1.4-2.4L14 9.2V3"/><path d="M7.2 15h9.6"/>',
-  music:'<path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/>',
-  at:'<circle cx="12" cy="12" r="4"/><path d="M16 8v5a3 3 0 0 0 6 0v-1a10 10 0 1 0-3.9 7.9"/>',
-  mail:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/>',
-  phone:'<path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.2a2 2 0 0 1 2.1-.5c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/>',
-  search:'<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>',
-  moon:'<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>',
-  sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
-  arrow:'<path d="M7 17 17 7M8 7h9v9"/>',
-  copy:'<rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/>',
-  chevrons:'<path d="m13 17 5-5-5-5M6 17l5-5-5-5"/>',
-  up:'<path d="m18 15-6-6-6 6"/>',
-  down:'<path d="m6 9 6 6 6-6"/>',
-  trophy:'<path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M17 5h3v2a3 3 0 0 1-3 3M7 5H4v2a3 3 0 0 0 3 3"/>',
-  tag:'<path d="M3 12V3h9l9 9-9 9z"/><circle cx="7.5" cy="7.5" r="1.4"/>',
-  link:'<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>',
-  shapes:'<circle cx="7" cy="7" r="4"/><rect x="13" y="13" width="8" height="8" rx="1.5"/><path d="M17.5 3 21 9h-7z"/>',
-  text:'<path d="M4 7V5h16v2M12 5v14M9 19h6"/>',
-  table:'<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M9 10v10"/>',
-  grid:'<rect x="3" y="3" width="7.5" height="7.5" rx="1.5"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="1.5"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="1.5"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="1.5"/>',
-  pointer:'<path d="M5 3v15l4-3.6 2.6 6 2.4-1-2.6-5.9H17z"/>',
-  sparkle:'<path d="M12 3c.6 4.6 2.4 6.4 7 7-4.6.6-6.4 2.4-7 7-.6-4.6-2.4-6.4-7-7 4.6-.6 6.4-2.4 7-7z"/><path d="M19 15.5c.2 1.6.9 2.3 2.5 2.5-1.6.2-2.3.9-2.5 2.5-.2-1.6-.9-2.3-2.5-2.5 1.6-.2 2.3-.9 2.5-2.5z"/>',
-  book:'<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5z"/><path d="M4 19.5V21h16"/>',
-  hospital:'<path d="M3 21h18M5 21V8l7-5 7 5v13"/><path d="M12 9v6M9 12h6"/>',
-  layers:'<path d="m12 3 9 5-9 5-9-5z"/><path d="m3 13 9 5 9-5"/>',
-  droplet:'<path d="M12 3s6.5 6.6 6.5 11.3A6.5 6.5 0 0 1 5.5 14.3C5.5 9.6 12 3 12 3z"/><path d="M9 14.5a3 3 0 0 0 3 3"/>',
-  tornado:'<path d="M21 4H3M18 8H6M19 12H9M16 16h-6M11 20H9"/>',
-  eye:'<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
-  monitor:'<rect x="2" y="4" width="20" height="13" rx="2"/><path d="M8 21h8M12 17v4"/><path d="M6 11h2.5l1.5-3 3 6 1.5-3H18"/>',
-  microscope:'<path d="M6 18h8M3 22h18M14 22a7 7 0 1 0 0-14h-1M9 14h2"/><path d="M9 12a2 2 0 0 1-2-2V6h6v4a2 2 0 0 1-2 2z"/><path d="M12 6V3a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v3"/>',
-  card:'<rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20M6 15h4"/>'
-};
-const FILLED={
-  github:'<path d="M12 .5a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.9 1.2 1.9 1.2 1.1 1.9 2.9 1.3 3.6 1 .1-.8.4-1.3.8-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0c2.3-1.5 3.3-1.2 3.3-1.2.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .5z"/>',
-  linkedin:'<path d="M4.98 3.5a2.5 2.5 0 1 1-.02 5 2.5 2.5 0 0 1 .02-5zM3 9h4v12H3zM10 9h3.8v1.7h.05c.53-.95 1.83-1.95 3.77-1.95C21.4 8.75 22 11 22 14.1V21h-4v-6.1c0-1.45-.03-3.3-2.05-3.3-2.05 0-2.37 1.57-2.37 3.2V21h-4z"/>'
-};
-function icon(name,cls=''){
-  const c=('ic '+cls).trim();
-  if(FILLED[name])return `<svg class="${c}" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">${FILLED[name]}</svg>`;
-  return `<svg class="${c}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[name]||''}</svg>`;
-}
-function hydrate(root=document){
-  $$('i.ic[data-i]',root).forEach(el=>{el.outerHTML=icon(el.dataset.i,el.className.replace(/\bic\b/,''))});
-}
+const svgIcon=d=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
+const MOON='<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>';
+const SUN='<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>';
 
 // ───────────────────────── data ─────────────────────────
 // inputs only earn a place when two or more projects draw on them
 const INPUTS=['python','pandas','sql','scikit-learn','pytorch','computer vision','apis'];
 const PROJECTS=[
-  {id:'gummi',t:'Gummi',icon:'droplet',type:'Hackathon',note:'Overall winner, WolfHacks 2026',win:true,
+  {id:'gummi',t:'Gummi',type:'Hackathon',note:'Overall winner, WolfHacks 2026',
    d:'A glucose coach for people with prediabetes. It looks two hours ahead, suggests a walk before a spike, and checks every prediction against what actually happened. I built the backend on Databricks: the app, all six agents, MLflow tracing and the self-improving prompt loop.',
    tags:['databricks','mlflow','fastapi','agent bricks'],feeds:[0,1,2,6],a:[1,2,3],b:[0,1],
    url:'https://github.com/THEpranavsomalraju/gummi'},
-  {id:'refuge',t:'Refuge',icon:'tornado',type:'Datathon',note:'1st place, Carolina Data Challenge 2026',win:true,
+  {id:'refuge',t:'Refuge',type:'Datathon',note:'1st place, Carolina Data Challenge 2026',
    d:'Send a tornado or hurricane through any real US town, turn its schools and churches into shelters, then replay the storm against the best possible plan. I built the risk models and the simulator calibration.',
    tags:['lightgbm','shap','polars','noaa data'],feeds:[0,1,2,3],a:[0,1,3],b:[0,2],
    url:'https://github.com/THEpranavsomalraju/refuge',live:'https://refugestorms.vercel.app'},
-  {id:'eyecode',t:'EyeCode',icon:'eye',type:'Hackathon',note:'2nd place, HackNC 2025',win:true,
+  {id:'eyecode',t:'EyeCode',type:'Hackathon',note:'2nd place, HackNC 2025',
    d:'A webcam turns eye blinks into Morse code, then into text.',
    tags:['python','flask','opencv','mediapipe'],feeds:[0,5,6],a:[0,1],b:[0,1],
    url:'https://github.com/THEpranavsomalraju/eyecode'},
-  {id:'clinician',t:'Clinician GUI',icon:'monitor',type:'Research',note:'Caltech × Duke',
+  {id:'clinician',t:'Clinician GUI',type:'Research',note:'Caltech × Duke',
    d:'Built with a Caltech mentor so clinicians run the rejection model with no terminal, no IDE, and no machine learning background.',
    tags:['typescript','react','tailwind','vite'],feeds:[4,5],a:[1,2],b:[1,2],
    url:'https://github.com/THEpranavsomalraju/Clinician-GUI'},
-  {id:'rejection',t:'Rejection Classifier',icon:'microscope',type:'Research',note:'98% validation accuracy',
+  {id:'rejection',t:'Rejection Classifier',type:'Research',note:'98% validation accuracy',
    d:'A fine-tuned ResNet50 grading cardiac transplant rejection at 98% validation accuracy, and 99.2% on the two calls pathologists agree on least.',
    tags:['pytorch','resnet50','umap'],feeds:[0,3,4,5],a:[0,2,3],b:[0,2],
    url:'https://github.com/THEpranavsomalraju/Rejection-Classifer-Caltech-Duke'},
-  {id:'card',t:'Card Dispute PRD',icon:'card',type:'Product',note:'21,508 CFPB narratives',
+  {id:'card',t:'Card Dispute PRD',type:'Product',note:'21,508 CFPB narratives',
    d:'21,508 CFPB complaint narratives, six tagged failure patterns, and one scoped fix at the denial stage, checked against Regulation Z.',
    tags:['product','python','cfpb api'],feeds:[0,1,6],a:[2,3],b:[1,2],
    url:'https://github.com/THEpranavsomalraju/card-dispute-prd'}
@@ -93,32 +44,10 @@ const PROJECTS=[
 const EMAIL='somalrajupc@gmail.com';
 const LINKS={github:'https://github.com/THEpranavsomalraju',linkedin:'https://linkedin.com/in/pranavsomalraju'};
 
-// ───────────────────────── render static bits ─────────────────────────
-$('#wins').innerHTML=PROJECTS.map((p,i)=>p.win?`
-  <div class="row blk" data-p="${i}" role="button" tabindex="0" aria-label="Open ${esc(p.t)}">
-    <span class="row-ic">${icon(p.icon)}</span><span class="row-t">${esc(p.t)}</span>
-    <span class="row-m">${esc(p.note)}</span>${icon('arrow','go')}
-  </div>`:'').join('');
-
-$('#toolbox').innerHTML=INPUTS.map((t,i)=>{
-  const used=PROJECTS.filter(p=>p.feeds.includes(i)).map(p=>p.t);
-  return `<span class="code" tabindex="0" data-tip="${esc(used.join(', '))}">${esc(t)}</span>`;
-}).join('');
-
-$('#db tbody').innerHTML=PROJECTS.map((p,i)=>`
-  <tr data-p="${i}" tabindex="0" aria-label="Open ${esc(p.t)}">
-    <td><span class="nm">${icon(p.icon)}${esc(p.t)}<span class="open">open</span></span></td>
-    <td><span class="ty">${esc(p.type)}</span></td>
-    <td class="nt">${esc(p.note)}</td>
-    <td class="stk-c"><span class="stk">${p.tags.slice(0,2).map(t=>`<span>${esc(t)}</span>`).join('')}${p.tags.length>2?`<span class="more">+${p.tags.length-2}</span>`:''}</span></td>
-  </tr>`).join('');
-
-hydrate();
-
 // ───────────────────────── theme ─────────────────────────
 const root=document.documentElement;
 const themeNow=()=>root.dataset.theme||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');
-function syncThemeBtn(){$('#theme').innerHTML=icon(themeNow()==='dark'?'sun':'moon')}
+function syncThemeBtn(){$('#theme').innerHTML=svgIcon(themeNow()==='dark'?SUN:MOON)}
 function setTheme(t,x=innerWidth-40,y=22){
   const apply=()=>{root.dataset.theme=t;store.set('v2-theme',t);syncThemeBtn();cover.recolor()};
   if(!document.startViewTransition||reduce){apply();return}
@@ -156,14 +85,15 @@ addEventListener('scroll',()=>$('#topbar').classList.toggle('scrolled',scrollY>4
 })();
 
 // ───────────────────────── tabs ─────────────────────────
-const TABS={home:{t:'Home',i:'home'},experience:{t:'Experience',i:'briefcase'},projects:{t:'Projects',i:'network'}};
+const TABS={home:'Home',experience:'Experience',projects:'Projects'};
 const tabBtns=$$('.tab');
 let curTab=null;
 function moveInk(instant){
   const b=$(`.tab[data-tab="${curTab}"]`),ink=$('#tab-ink');
   if(!b)return;
   if(instant)ink.style.transition='none';
-  ink.style.transform=`translateX(${b.offsetLeft}px)`;ink.style.width=b.offsetWidth+'px';
+  const pad=b===tabBtns[0]?0:10;   // the ink sits under the word, not the padding
+  ink.style.transform=`translateX(${b.offsetLeft+pad}px)`;ink.style.width=(b.offsetWidth-pad-10)+'px';
   if(instant){void ink.offsetWidth;ink.style.transition=''}
 }
 function setTab(name,{instant=false}={}){
@@ -177,15 +107,16 @@ function setTab(name,{instant=false}={}){
     if(on&&!instant&&!reduce){void v.offsetWidth;v.classList.add('enter')}
   });
   moveInk(instant);
-  $('#crumb').innerHTML=icon(TABS[name].i)+`<span>${TABS[name].t}</span>`;
-  document.title=name==='home'?'Pranav Somalraju':`${TABS[name].t} · Pranav Somalraju`;
+  $('#crumb').textContent=TABS[name];
+  document.title=name==='home'?'Pranav Somalraju':`${TABS[name]} · Pranav Somalraju`;
+  if(name==='experience')timeline.run();
   if(name==='projects')net.enter(); else net.leave();
 }
 function route(){
   const [tab,pid]=location.hash.replace(/^#/,'').split('/');
   setTab(TABS[tab]?tab:'home',{instant:curTab===null});
   const k=PROJECTS.findIndex(p=>p.id===pid);
-  if(k>=0)openPeek(k,{fromRoute:true}); else if(peekIdx>=0)closePeek({fromRoute:true});
+  if(curTab==='projects'&&k>=0)net.select(k);
 }
 tabBtns.forEach((b,i)=>{
   b.addEventListener('click',()=>{location.hash=b.dataset.tab});
@@ -198,174 +129,139 @@ tabBtns.forEach((b,i)=>{
 addEventListener('resize',()=>moveInk(true));
 if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>moveInk(true));
 
-// ───────────────────────── side peek ─────────────────────────
-const peek=$('#peek'),scrim=$('#scrim');
-let peekIdx=-1,lastFocus=null;
-function renderPeek(p){
-  const feeds=p.feeds.map(i=>`<span class="code">${esc(INPUTS[i])}</span>`).join('');
-  $('#peek-body').innerHTML=`
-    <div class="pk-icon">${icon(p.icon)}</div>
-    <h1 class="pk-title" id="pk-title">${esc(p.t)}</h1>
-    <div class="props">
-      <div class="prop"><span class="k">${icon('shapes')}Type</span><span class="v"><span class="pill">${esc(p.type)}</span></span></div>
-      <div class="prop"><span class="k">${icon('trophy')}Note</span><span class="v">${esc(p.note)}</span></div>
-      <div class="prop"><span class="k">${icon('tag')}Stack</span><span class="v">${p.tags.map(t=>`<span class="pill">${esc(t)}</span>`).join('')}</span></div>
-      <div class="prop"><span class="k">${icon('link')}Links</span><span class="v links">
-        ${p.live?`<a href="${p.live}" target="_blank" rel="noopener">play it live</a>`:''}
-        <a href="${p.url}" target="_blank" rel="noopener">github</a></span></div>
-    </div>
-    <hr>
-    <p class="pk-desc">${esc(p.d)}</p>
-    <div class="pal-g" style="padding-left:0">feeds from</div>
-    <div class="pk-feeds">${feeds}</div>`;
-  const o=$('#pk-open');o.href=p.live||p.url;$('#pk-open-t').textContent=p.live?'Play it live':'Open on GitHub';
-  const body=$('#peek-body');body.scrollTop=0;
-  if(!reduce){body.classList.remove('swap');void body.offsetWidth;body.classList.add('swap')}
-}
-function openPeek(k,{fromRoute=false}={}){
-  if(!PROJECTS[k])return;
-  if(peekIdx<0)lastFocus=document.activeElement;
-  peekIdx=k;renderPeek(PROJECTS[k]);
-  peek.classList.add('open');scrim.classList.add('on');peek.setAttribute('aria-hidden','false');
-  net.hold(k);
-  if(!fromRoute)history.replaceState(null,'',`#${curTab}/${PROJECTS[k].id}`);
-  setTimeout(()=>$('#pk-close').focus({preventScroll:true}),60);
-}
-function closePeek({fromRoute=false}={}){
-  if(peekIdx<0)return;
-  peekIdx=-1;peek.classList.remove('open');scrim.classList.remove('on');peek.setAttribute('aria-hidden','true');
-  net.hold(-1);
-  if(!fromRoute)history.replaceState(null,'','#'+curTab);
-  if(lastFocus&&lastFocus.focus)lastFocus.focus({preventScroll:true});
-}
-const stepPeek=d=>openPeek((peekIdx+d+PROJECTS.length)%PROJECTS.length);
-$('#pk-close').addEventListener('click',()=>closePeek());
-$('#pk-prev').addEventListener('click',()=>stepPeek(-1));
-$('#pk-next').addEventListener('click',()=>stepPeek(1));
-scrim.addEventListener('click',()=>closePeek());
-document.addEventListener('click',e=>{
-  const r=e.target.closest('[data-p]');
-  if(r)openPeek(+r.dataset.p);
-});
-document.addEventListener('keydown',e=>{
-  const r=e.target.closest&&e.target.closest('[data-p]');
-  if(r&&(e.key==='Enter'||e.key===' ')){e.preventDefault();openPeek(+r.dataset.p)}
-});
-// table rows light their path in the network above
-$$('#db tbody tr').forEach(tr=>{
-  tr.addEventListener('pointerenter',()=>net.show(+tr.dataset.p));
-  tr.addEventListener('pointerleave',()=>net.show(-1));
-});
+// ───────────────────────── experience ─────────────────────────
+const timeline={
+  run(){
+    const tl=$('#tl');
+    $$('.tl-dot',tl).forEach((d,n)=>d.style.setProperty('--n',n));
+    tl.classList.remove('run');
+    if(!reduce){void tl.offsetWidth;tl.classList.add('run')}
+  }
+};
 
-// ───────────────────────── network ─────────────────────────
+// ───────────────────────── projects: network + readout ─────────────────────────
 const net=(()=>{
-  const svg=$('#net');
+  const svg=$('#net'),detail=$('#detail');
   const narrow=matchMedia('(max-width: 760px)');
   const spread=(n,lo,hi)=>Array.from({length:n},(_,i)=>Math.round(lo+i*(hi-lo)/(n-1)));
   const IY=spread(INPUTS.length,52,412),AY=spread(4,112,352),BY=spread(3,152,312),OY=spread(PROJECTS.length,60,404);
   const d=(x1,y1,x2,y2)=>{const k=.45*(x2-x1);return `M${x1} ${y1} C${x1+k} ${y1}, ${x2-k} ${y2}, ${x2} ${y2}`};
-  let edges=[],outs=[],XI=0;
-  // on a phone the layers tuck in and the projects go icon-only; the table
-  // underneath carries their names
+  let edges=[],outs=[],sel=0,hover=false,active=false,built=false,sparkT,sparking=false;
+  const q=s=>svg.querySelector(s);
+
+  // wide on a desktop; on a phone the layers tuck in and the projects go
+  // numbers-only, since the readout underneath names them
   function draw(){
     const c=narrow.matches;
-    XI=c?140:190;const XA=c?212:400,XB=c?276:600,XO=c?338:780;
+    const XI=c?140:230,XA=c?212:520,XB=c?276:790,XO=c?338:1020;
     let h=`<text class="lab" x="${XI-16}" y="18" text-anchor="end">what i use</text>`+
-          `<text class="lab" x="${XO}" y="18" text-anchor="${c?'middle':'start'}" dx="${c?0:-18}">what it made</text>`;
+          `<text class="lab" x="${c?XO:XO-17}" y="18" text-anchor="${c?'middle':'start'}">what it made</text>`;
     IY.forEach((y,i)=>AY.forEach((ya,j)=>{h+=`<path class="edge e-i${i}-a${j}" d="${d(XI,y,XA,ya)}"/>`}));
     AY.forEach((ya,j)=>BY.forEach((yb,m)=>{h+=`<path class="edge e-a${j}-b${m}" d="${d(XA,ya,XB,yb)}"/>`}));
     BY.forEach((yb,m)=>OY.forEach((yo,k)=>{h+=`<path class="edge e-b${m}-o${k}" d="${d(XB,yb,XO,yo)}"/>`}));
     AY.forEach((y,j)=>{h+=`<g class="node nh a${j}"><circle cx="${XA}" cy="${y}" r="5"/></g>`});
     BY.forEach((y,m)=>{h+=`<g class="node nh b${m}"><circle cx="${XB}" cy="${y}" r="5"/></g>`});
     INPUTS.forEach((t,i)=>{const y=IY[i];
-      h+=`<g class="node ni i${i}" data-i="${i}"><circle cx="${XI}" cy="${y}" r="6"/><text x="${XI-16}" y="${y+4.5}" text-anchor="end">${esc(t)}</text></g>`});
+      h+=`<g class="node ni i${i}" data-i="${i}"><circle cx="${XI}" cy="${y}" r="6"/><text x="${XI-16}" y="${y+5}" text-anchor="end">${esc(t)}</text></g>`});
     PROJECTS.forEach((p,k)=>{const y=OY[k];
-      h+=`<g class="node no o${k}" data-o="${k}" tabindex="0" role="button" aria-label="Open ${esc(p.t)}">
-        <circle class="ring" cx="${XO}" cy="${y}" r="19"/>
-        <circle class="body" cx="${XO}" cy="${y}" r="19"/>
-        <svg class="glyph" x="${XO-10}" y="${y-10}" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">${ICONS[p.icon]}</svg>
-        ${c?'':`<text x="${XO+32}" y="${y+5}">${esc(p.t)}</text>`}</g>`});
+      h+=`<g class="node no o${k}" data-o="${k}" tabindex="0" role="button" aria-label="${esc(p.t)}">
+        <circle class="ring" cx="${XO}" cy="${y}" r="17"/><circle class="body" cx="${XO}" cy="${y}" r="17"/>
+        <text class="num" x="${XO}" y="${y+4.2}" text-anchor="middle">${String(k+1).padStart(2,'0')}</text>
+        ${c?'':`<text class="name" x="${XO+32}" y="${y+6}">${esc(p.t)}</text>`}</g>`});
     svg.innerHTML=h+`<circle class="spark" r="3.2" cx="${XI}" cy="${IY[0]}" opacity="0"/>`;
     edges=$$('.edge',svg);outs=$$('.no',svg);
-    fit();
-    if(held>=0){svg.classList.add('dim');lightProject(held)}
+    fit();show(sel);
   }
-  const q=s=>svg.querySelector(s);
-  // fit the viewBox to the actual ink, so the net sits dead centre in its frame
+  // fit the viewBox to the actual ink, so the net sits dead centre
   function fit(){
     if(svg.closest('[hidden]'))return;
-    const bb=svg.getBBox(),pad=18;
-    svg.setAttribute('viewBox',`${bb.x-pad} ${bb.y-pad+4} ${bb.width+pad*2} ${bb.height+pad*2-4}`);
+    const bb=svg.getBBox(),pad=12;
+    svg.setAttribute('viewBox',`${bb.x-pad} ${bb.y-pad} ${bb.width+pad*2} ${bb.height+pad*2}`);
   }
-  let held=-1,hover=false,active=false,built=false,sparkT,sparking=false;
 
   function clear(){
     edges.forEach(e=>e.classList.remove('lit'));
     $$('.ni,.nh',svg).forEach(n=>n.classList.remove('lit'));
     outs.forEach(o=>o.classList.remove('on'));
-    svg.classList.remove('dim');
   }
   function lightProject(k,fromInput){
     const p=PROJECTS[k];
-    const ins=fromInput==null?p.feeds:[fromInput];
-    ins.forEach(i=>{q('.i'+i).classList.add('lit');p.a.forEach(j=>q(`.e-i${i}-a${j}`).classList.add('lit'))});
+    (fromInput==null?p.feeds:[fromInput]).forEach(i=>{q('.i'+i).classList.add('lit');p.a.forEach(j=>q(`.e-i${i}-a${j}`).classList.add('lit'))});
     p.a.forEach(j=>{q('.a'+j).classList.add('lit');p.b.forEach(m=>q(`.e-a${j}-b${m}`).classList.add('lit'))});
     p.b.forEach(m=>{q('.b'+m).classList.add('lit');q(`.e-b${m}-o${k}`).classList.add('lit')});
     outs[k].classList.add('on');
   }
-  function show(k){clear();if(k<0){if(held>=0)show(held);return}svg.classList.add('dim');lightProject(k)}
+  function show(k){clear();svg.classList.add('dim');lightProject(k)}
   function showInput(i){clear();svg.classList.add('dim');PROJECTS.forEach((p,k)=>{if(p.feeds.includes(i))lightProject(k,i)})}
+
+  // the readout under the net: whatever you last touched stays put, so you
+  // can move down to it and follow a link
+  function render(k,anim){
+    const p=PROJECTS[k];
+    const links=(p.live?`<a href="${p.live}" target="_blank" rel="noopener">play it live ↗</a>`:'')+
+      `<a href="${p.url}" target="_blank" rel="noopener">github ↗</a>`;
+    detail.innerHTML=`
+      <p class="d-meta">${String(k+1).padStart(2,'0')} · ${esc(p.type.toLowerCase())}</p>
+      <h3 class="d-title">${esc(p.t)}</h3>
+      <p class="d-note">${esc(p.note)}</p>
+      <p class="d-desc">${esc(p.d)}</p>
+      <dl class="d-rows">
+        <dt>stack</dt><dd>${p.tags.map(esc).join(' · ')}</dd>
+        <dt>draws on</dt><dd>${p.feeds.map(i=>esc(INPUTS[i])).join(' · ')}</dd>
+      </dl>
+      <div class="d-links">${links}</div>`;
+    if(anim&&!reduce){detail.classList.remove('swap');void detail.offsetWidth;detail.classList.add('swap')}
+  }
+  function select(k){
+    if(k<0||k>=PROJECTS.length)return;
+    const changed=k!==sel;sel=k;show(k);
+    if(changed)render(k,true);
+  }
 
   // delegated, so a redraw keeps working without rewiring
   const target=e=>{const o=e.target.closest('.no');if(o)return{k:+o.dataset.o,el:o};const n=e.target.closest('.ni');if(n)return{i:+n.dataset.i,el:n};return null};
   svg.addEventListener('pointerover',e=>{
     const t=target(e);if(!t||(e.relatedTarget&&t.el.contains(e.relatedTarget)))return;
-    hover=true;t.k!=null?show(t.k):showInput(t.i);
+    hover=true;t.k!=null?select(t.k):showInput(t.i);
   });
   svg.addEventListener('pointerout',e=>{
     const t=target(e);if(!t||(e.relatedTarget&&t.el.contains(e.relatedTarget)))return;
-    hover=false;show(-1);
+    hover=false;show(sel);
   });
-  svg.addEventListener('click',e=>{const t=target(e);if(t&&t.k!=null)openPeek(t.k)});
-  svg.addEventListener('keydown',e=>{const t=target(e);if(t&&t.k!=null&&(e.key==='Enter'||e.key===' ')){e.preventDefault();openPeek(t.k)}});
-  svg.addEventListener('focusin',e=>{const t=target(e);if(t&&t.k!=null)show(t.k)});
-  svg.addEventListener('focusout',()=>show(-1));
-  draw();
-  narrow.addEventListener('change',draw);
-  if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>requestAnimationFrame(fit));
+  svg.addEventListener('click',e=>{const t=target(e);if(t&&t.k!=null)select(t.k)});
+  svg.addEventListener('focusin',e=>{const t=target(e);if(t&&t.k!=null)select(t.k)});
 
   // first visit: the wiring knits itself together, quickly, once
   function build(){
     built=true;
     if(reduce)return;
     edges.forEach(e=>{
-      const len=e.getTotalLength();
-      const col=e.classList[1].startsWith('e-i')?0:e.classList[1].startsWith('e-a')?1:2;
+      const len=e.getTotalLength(),c=e.classList[1];
+      const col=c.startsWith('e-i')?0:c.startsWith('e-a')?1:2;
       e.animate([{strokeDasharray:len,strokeDashoffset:len},{strokeDasharray:len,strokeDashoffset:0}],
         {duration:520,delay:col*170+Math.random()*160,easing:'cubic-bezier(.3,.7,.2,1)',fill:'backwards'});
     });
     $$('.node',svg).forEach(n=>{
-      const col=n.classList.contains('ni')?0:n.classList.contains('a0')||n.classList.contains('a1')||n.classList.contains('a2')||n.classList.contains('a3')?1:n.classList.contains('nh')?2:3;
+      const col=n.classList.contains('ni')?0:/\ba\d\b/.test(n.getAttribute('class'))?1:n.classList.contains('nh')?2:3;
       n.animate([{opacity:0},{opacity:1}],{duration:400,delay:col*170+Math.random()*120,fill:'backwards'});
     });
   }
 
   // nobody's touching it? a single signal slips through now and then
   function spark(){
-    if(!active||hover||held>=0||document.hidden||reduce){schedule();return}
+    if(!active||hover||document.hidden||reduce){schedule();return}
     const k=Math.floor(Math.random()*PROJECTS.length),p=PROJECTS[k];
     const pick=a=>a[Math.floor(Math.random()*a.length)];
     const i=pick(p.feeds),j=pick(p.a),m=pick(p.b);
     const segs=[q(`.e-i${i}-a${j}`),q(`.e-a${j}-b${m}`),q(`.e-b${m}-o${k}`)];
     const dot=q('.spark');sparking=true;
     const SEG=520;let s=0,t0=null;
-    q('.i'+i).classList.add('lit');
     function step(ts){
-      if(!active||hover||held>=0){dot.setAttribute('opacity',0);q('.i'+i).classList.remove('lit');sparking=false;schedule();return}
+      if(!active||hover||!dot.isConnected){if(dot.isConnected)dot.setAttribute('opacity',0);sparking=false;schedule();return}
       if(t0==null)t0=ts;
       let u=(ts-t0)/SEG;
       if(u>=1){s++;t0=ts;u=0;if(s>=segs.length){
-        dot.setAttribute('opacity',0);q('.i'+i).classList.remove('lit');
+        dot.setAttribute('opacity',0);
         const r=outs[k].querySelector('.ring');r.classList.remove('ping');void r.getBBox();r.classList.add('ping');
         sparking=false;schedule();return}}
       const e=segs[s],L=e.getTotalLength(),pt=e.getPointAtLength(L*(u<.5?2*u*u:1-Math.pow(-2*u+2,2)/2));
@@ -376,24 +272,27 @@ const net=(()=>{
   }
   function schedule(){clearTimeout(sparkT);if(active)sparkT=setTimeout(spark,2600+Math.random()*3400)}
 
+  draw();render(sel,false);
+  narrow.addEventListener('change',draw);
+  if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>requestAnimationFrame(fit));
   return{
     enter(){active=true;fit();if(!built)build();if(!sparking)schedule()},
     leave(){active=false;clearTimeout(sparkT)},
-    show(k){if(!hover)show(k)},
-    hold(k){held=k;hover=false;clear();if(k>=0){svg.classList.add('dim');lightProject(k)}}
+    select,
+    step(dir){select((sel+dir+PROJECTS.length)%PROJECTS.length)}
   };
 })();
 
 // ───────────────────────── palette ─────────────────────────
 const pal=$('#palette'),palQ=$('#pal-q'),palList=$('#pal-list');
 const CMDS=[
-  ...Object.entries(TABS).map(([k,v])=>({g:'pages',t:v.t,i:v.i,h:'',run:()=>{location.hash=k}})),
-  ...PROJECTS.map((p,k)=>({g:'projects',t:p.t,i:p.icon,h:p.type.toLowerCase(),run:()=>openPeek(k)})),
-  {g:'actions',t:'Toggle dark mode',i:'moon',h:'',run:()=>toggleTheme(innerWidth/2,innerHeight/3)},
-  {g:'actions',t:'Copy email address',i:'copy',h:'',run:copyEmail},
-  {g:'actions',t:'Send an email',i:'mail',h:'',run:()=>{location.href='mailto:'+EMAIL}},
-  {g:'actions',t:'Open GitHub',i:'github',h:'',run:()=>open(LINKS.github,'_blank','noopener')},
-  {g:'actions',t:'Open LinkedIn',i:'linkedin',h:'',run:()=>open(LINKS.linkedin,'_blank','noopener')}
+  ...Object.entries(TABS).map(([k,v],n)=>({g:'pages',t:v,h:String(n+1),run:()=>{location.hash=k}})),
+  ...PROJECTS.map(p=>({g:'projects',t:p.t,h:p.type.toLowerCase(),run:()=>{location.hash='projects/'+p.id}})),
+  {g:'actions',t:'Toggle dark mode',h:'',run:()=>toggleTheme(innerWidth/2,innerHeight/3)},
+  {g:'actions',t:'Copy email address',h:'',run:copyEmail},
+  {g:'actions',t:'Send an email',h:'',run:()=>{location.href='mailto:'+EMAIL}},
+  {g:'actions',t:'Open GitHub',h:'',run:()=>open(LINKS.github,'_blank','noopener')},
+  {g:'actions',t:'Open LinkedIn',h:'',run:()=>open(LINKS.linkedin,'_blank','noopener')}
 ];
 let palItems=[],palSel=0,palFrom=null;
 function palRender(){
@@ -404,7 +303,7 @@ function palRender(){
   let g='',h='';
   palItems.forEach((c,n)=>{
     if(c.g!==g){g=c.g;h+=`<div class="pal-g">${g}</div>`}
-    h+=`<div class="pal-i" role="option" id="pal-${n}" data-n="${n}" aria-selected="${n===palSel}">${icon(c.i)}<span>${esc(c.t)}</span><span class="h">${n===palSel?'↵':esc(c.h)}</span></div>`;
+    h+=`<div class="pal-i" role="option" id="pal-${n}" data-n="${n}" aria-selected="${n===palSel}"><span>${esc(c.t)}</span><span class="h">${n===palSel?'↵':esc(c.h)}</span></div>`;
   });
   palList.innerHTML=h;
   palQ.setAttribute('aria-activedescendant','pal-'+palSel);
@@ -427,71 +326,75 @@ palList.addEventListener('click',e=>{const it=e.target.closest('.pal-i');if(it)p
 pal.addEventListener('click',e=>{if(e.target===pal)palClose()});
 $('#open-palette').addEventListener('click',palOpen);
 
-// keys: / or ⌘K for commands, 1·2·3 for tabs, j/k through an open peek
+// keys: / or ⌘K for commands, 1·2·3 for tabs, j/k through the projects
 document.addEventListener('keydown',e=>{
   const typing=/^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName)||e.target.isContentEditable;
   if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==='k'){e.preventDefault();pal.hidden?palOpen():palClose();return}
-  if(e.key==='Escape'){if(!pal.hidden)palClose();else closePeek();return}
+  if(e.key==='Escape'){palClose();return}
   if(typing||e.metaKey||e.ctrlKey||e.altKey||!pal.hidden)return;
   if(e.key==='/'){e.preventDefault();palOpen();return}
-  if(peekIdx>=0&&(e.key==='j'||e.key==='ArrowDown')){e.preventDefault();stepPeek(1);return}
-  if(peekIdx>=0&&(e.key==='k'||e.key==='ArrowUp')){e.preventDefault();stepPeek(-1);return}
+  if(curTab==='projects'&&(e.key==='j'||e.key==='k')){net.step(e.key==='j'?1:-1);return}
   const n={'1':'home','2':'experience','3':'projects'}[e.key];
-  if(n){closePeek();location.hash=n}
+  if(n)location.hash=n;
 });
 
 // ───────────────────────── now playing ─────────────────────────
 (function(){
-  const row=$('#np');let shown='';
+  const a=$('#np');let shown='';
   function load(){
     fetch('/api/now-playing',{headers:{accept:'application/json'},cache:'no-store'})
       .then(r=>r.ok?r.json():null)
       .then(d=>{
         if(!d||!d.title)return;
-        const line=d.title+(d.artist?' — '+d.artist:'');
-        if(line+d.playing===shown)return;shown=line+d.playing;
-        $('#np-k').textContent=d.playing?'Listening to':'Last played';
-        $('#np-t').textContent=line;
-        const a=$('#np-v');a.title=line;a.classList.toggle('past',!d.playing);
+        const line=(d.playing?'listening to ':'last played ')+d.title+(d.artist?' — '+d.artist:'');
+        if(line===shown)return;shown=line;
+        $('#np-t').textContent=line;a.title=line;a.classList.toggle('past',!d.playing);
         if(typeof d.url==='string'&&d.url.startsWith('https://open.spotify.com/'))a.href=d.url;else a.removeAttribute('href');
-        row.hidden=false;
+        a.hidden=false;
       }).catch(()=>{});
   }
   load();setInterval(load,20000);
   document.addEventListener('visibilitychange',()=>{if(!document.hidden)load()});
 })();
 
-// ───────────────────────── the title, decoded ─────────────────────────
-// hover the name and it briefly falls back to signal before resolving
+// ───────────────────────── the name ─────────────────────────
+// whichever letters you pass over fall back to signal for a beat, then resolve
 (function(){
   const h=$('#title'),text=h.textContent;
   h.innerHTML=[...text].map(c=>`<span class="ch" aria-hidden="true">${c===' '?' ':esc(c)}</span>`).join('');
-  const chs=$$('.ch',h),GLYPHS='01#/<>{}*+=';
-  let last=0,running=false;
-  h.addEventListener('pointerenter',()=>{
-    if(reduce||running||Date.now()-last<7000)return;
-    running=true;last=Date.now();
-    chs.forEach((el,n)=>{
-      const real=text[n];if(real===' ')return;
-      const w=el.getBoundingClientRect().width;el.style.width=w+'px';el.style.textAlign='center';
-      let ticks=0;const stop=6+n*1.4;
-      const iv=setInterval(()=>{
-        if(ticks++>=stop){clearInterval(iv);el.textContent=real;el.style.width='';el.style.textAlign='';
-          if(n===chs.length-1)running=false;return}
-        el.textContent=GLYPHS[Math.floor(Math.random()*GLYPHS.length)];
-      },38);
-    });
-  });
+  const chs=$$('.ch',h),GLYPHS='01#/<>{}*+=%$';
+  // pin every letter to its real width so the glyphs never shove the line around
+  function lock(){chs.forEach(el=>{el.style.width=''});chs.forEach(el=>{el.style.width=el.getBoundingClientRect().width+'px'})}
+  if(document.fonts&&document.fonts.ready)document.fonts.ready.then(lock);else lock();
+  addEventListener('resize',()=>{clearTimeout(lock._t);lock._t=setTimeout(lock,150)});
+  const live=new Map();
+  function burst(n){
+    const el=chs[n],real=text[n];
+    if(!el||real===' ')return;
+    clearInterval(live.get(n));
+    let ticks=0;const stop=4+Math.floor(Math.random()*5);
+    el.classList.add('hot');
+    live.set(n,setInterval(()=>{
+      if(ticks++>=stop){clearInterval(live.get(n));live.delete(n);el.textContent=real;el.classList.remove('hot');return}
+      el.textContent=GLYPHS[Math.floor(Math.random()*GLYPHS.length)];
+    },48));
+  }
+  chs.forEach((el,n)=>el.addEventListener('pointerenter',()=>{
+    if(reduce)return;
+    burst(n);
+    if(Math.random()<.7)setTimeout(()=>burst(n-1),50);
+    if(Math.random()<.7)setTimeout(()=>burst(n+1),50);
+  }));
 })();
 
 // ───────────────────────── cover: a quiet field of neurons ─────────────────────────
 const cover=(()=>{
   const wrap=$('#cover-wrap'),cv=$('#cover'),ctx=cv.getContext('2d');
   const GAP=22;
-  let W=0,H=0,dpr=1,dots=[],ink='#000',mx=-999,my=-999,inView=true,raf=0,syn=null,ripple=null,lastMove=0;
+  let W=0,H=0,dots=[],ink='#000',mx=-999,my=-999,inView=true,raf=0,syn=null,ripple=null,lastMove=0;
   function recolor(){ink=getComputedStyle(root).getPropertyValue('--ink').trim()||'#000';kick()}
   function size(){
-    dpr=Math.min(2,devicePixelRatio||1);W=wrap.clientWidth;H=wrap.clientHeight;
+    const dpr=Math.min(2,devicePixelRatio||1);W=wrap.clientWidth;H=wrap.clientHeight;
     cv.width=W*dpr;cv.height=H*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);
     dots=[];
     const ox=(W%GAP)/2+GAP/2,oy=(H%GAP)/2+GAP/2;
@@ -526,9 +429,9 @@ const cover=(()=>{
         busy=true;
         const a=Math.sin(Math.PI*u);
         ctx.globalAlpha=a*.5;ctx.strokeStyle=ink;ctx.lineWidth=1;
-        ctx.beginPath();ctx.moveTo(syn.a.x,syn.a.y);
-        ctx.quadraticCurveTo(syn.cx,syn.cy,syn.b.x,syn.b.y);ctx.stroke();
-        const v=Math.min(1,u*1.4),ix=(1-v)*(1-v)*syn.a.x+2*(1-v)*v*syn.cx+v*v*syn.b.x,iy=(1-v)*(1-v)*syn.a.y+2*(1-v)*v*syn.cy+v*v*syn.b.y;
+        ctx.beginPath();ctx.moveTo(syn.a.x,syn.a.y);ctx.quadraticCurveTo(syn.cx,syn.cy,syn.b.x,syn.b.y);ctx.stroke();
+        const v=Math.min(1,u*1.4);
+        const ix=(1-v)*(1-v)*syn.a.x+2*(1-v)*v*syn.cx+v*v*syn.b.x,iy=(1-v)*(1-v)*syn.a.y+2*(1-v)*v*syn.cy+v*v*syn.b.y;
         ctx.globalAlpha=a;ctx.fillStyle=ink;ctx.beginPath();ctx.arc(ix,iy,2,0,6.283);ctx.fill();
       }
     }
@@ -548,8 +451,7 @@ const cover=(()=>{
     }
     setTimeout(synapse,4200+Math.random()*5200);
   }
-  const hero=$('.page');
-  [wrap,hero].forEach(el=>el.addEventListener('pointermove',e=>{
+  [wrap,$('.page')].forEach(el=>el.addEventListener('pointermove',e=>{
     const r=wrap.getBoundingClientRect();mx=e.clientX-r.left;my=e.clientY-r.top;lastMove=Date.now();if(!reduce)kick();
   },{passive:true}));
   wrap.addEventListener('dblclick',e=>{
@@ -577,9 +479,9 @@ const cover=(()=>{
     g.classList.remove('on');sel.classList.remove('on');
   }
   function go(){
-    if(document.hidden||!pal.hidden||peekIdx>=0||innerWidth<760){arm();return}
-    const vis=$$('.view:not([hidden]) .blk, .props .prop').filter(el=>{
-      const r=el.getBoundingClientRect();return r.top>70&&r.bottom<innerHeight-30&&r.height<160&&r.width>120;
+    if(document.hidden||!pal.hidden||innerWidth<760){arm();return}
+    const vis=$$('.view:not([hidden]) :is(p,li,h2,blockquote,.tl-body,dd)').filter(el=>{
+      const r=el.getBoundingClientRect();return r.top>70&&r.bottom<innerHeight-30&&r.height<160&&r.width>60;
     });
     if(vis.length<2){arm();return}
     live=true;runs++;
@@ -606,6 +508,6 @@ const cover=(()=>{
 // ───────────────────────── boot ─────────────────────────
 addEventListener('hashchange',route);
 route();
-console.log('%chi, you found the console.%c\npress / anywhere. double-click the cover. hover my name.',
+console.log('%chi, you found the console.%c\npress / anywhere. double-click the cover. run a finger over my name.',
   'font:600 13px Inter,sans-serif','font:12px JetBrains Mono,monospace;color:#888');
 })();

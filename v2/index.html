@@ -24,7 +24,7 @@
   </nav>
   <div class="tb-right">
     <span class="edited" id="edited"></span>
-    <button class="tb-btn" id="open-palette" aria-label="Search and commands"><i class="ic" data-i="search"></i><kbd>⌘K</kbd></button>
+    <button class="tb-btn" id="open-palette" aria-label="Commands"><kbd>⌘K</kbd></button>
     <button class="tb-btn sq" id="theme" aria-label="Switch theme"></button>
   </div>
 </header>
@@ -34,97 +34,92 @@
 <main class="page">
   <div class="page-icon"><img src="../portrait.jpg" alt="Pranav Somalraju" width="400" height="400" /></div>
   <h1 class="title" id="title" aria-label="Pranav Somalraju">Pranav Somalraju</h1>
-
-  <div class="props">
-    <div class="prop"><span class="k"><i class="ic" data-i="pin"></i>Based in</span><span class="v">Chapel Hill, NC</span></div>
-    <div class="prop"><span class="k"><i class="ic" data-i="cap"></i>Studying</span><span class="v">Computer Science + Neuroscience <span class="dim">at</span> UNC</span></div>
-    <div class="prop"><span class="k"><i class="ic" data-i="flask"></i>Research</span><span class="v"><span class="pill">Caltech</span><span class="pill">Duke</span></span></div>
-    <!-- filled by /api/now-playing; stays hidden when that isn't answering -->
-    <div class="prop" id="np" hidden><span class="k"><i class="ic" data-i="music"></i><span id="np-k">Listening to</span></span><a class="v np" id="np-v" target="_blank" rel="noopener noreferrer"><span class="eq" aria-hidden="true"><i></i><i></i><i></i></span><span id="np-t"></span></a></div>
-    <div class="prop"><span class="k"><i class="ic" data-i="at"></i>Reach me</span><span class="v links">
-      <a href="mailto:somalrajupc@gmail.com">email</a>
-      <a href="https://github.com/THEpranavsomalraju" target="_blank" rel="noopener">github</a>
-      <a href="https://linkedin.com/in/pranavsomalraju" target="_blank" rel="noopener">linkedin</a>
-    </span></div>
-  </div>
+  <!-- filled by /api/now-playing; stays hidden when that isn't answering -->
+  <a class="np" id="np" target="_blank" rel="noopener noreferrer" hidden><span class="eq" aria-hidden="true"><i></i><i></i><i></i></span><span id="np-t"></span></a>
 
   <div class="tabs" role="tablist" aria-label="Sections" id="tabs">
-    <button class="tab" role="tab" id="t-home" aria-controls="v-home" data-tab="home"><i class="ic" data-i="home"></i>Home</button>
-    <button class="tab" role="tab" id="t-experience" aria-controls="v-experience" data-tab="experience"><i class="ic" data-i="briefcase"></i>Experience</button>
-    <button class="tab" role="tab" id="t-projects" aria-controls="v-projects" data-tab="projects"><i class="ic" data-i="network"></i>Projects</button>
+    <button class="tab" role="tab" id="t-home" aria-controls="v-home" data-tab="home">Home</button>
+    <button class="tab" role="tab" id="t-experience" aria-controls="v-experience" data-tab="experience">Experience</button>
+    <button class="tab" role="tab" id="t-projects" aria-controls="v-projects" data-tab="projects">Projects</button>
     <span class="tab-ink" id="tab-ink" aria-hidden="true"></span>
   </div>
 
   <!-- HOME -->
   <section class="view" id="v-home" role="tabpanel" aria-labelledby="t-home" data-view="home" hidden>
-    <div class="callout blk">
-      <span class="callout-ic"><i class="ic" data-i="sparkle"></i></span>
-      <p>I study <b>computer science and neuroscience</b> at UNC Chapel Hill, research <b>deep learning</b> at Caltech, and build <b>AI models for pathologists</b> at Duke.</p>
-    </div>
-    <p class="blk">I also researched at Harvard Medical School, and I work part time as a medical assistant at UNC Health.</p>
+    <p class="lead">I study computer science and neuroscience at UNC Chapel Hill. Most of my time goes to research: deep learning at Caltech, and AI models that help pathologists read biopsies at Duke.</p>
+    <p>I also researched at Harvard Medical School, and I work part time as a medical assistant at UNC Health. The rest of the time I build things at hackathons and datathons.</p>
 
-    <h2 class="blk" data-md="##">Recent wins</h2>
-    <div class="rows" id="wins"></div>
+    <h2 data-md="##">Recently</h2>
+    <ul class="updates">
+      <li><a href="#projects/gummi">Gummi</a> won overall at WolfHacks 2026. It's a glucose coach that checks its own predictions.</li>
+      <li><a href="#projects/refuge">Refuge</a> took 1st at the Carolina Data Challenge 2026. It simulates storms against real towns.</li>
+    </ul>
 
-    <h2 class="blk" data-md="##">Toolbox</h2>
-    <p class="blk muted small">The tools that keep showing up across projects.</p>
-    <p class="blk toolbox" id="toolbox"></p>
-
-    <h2 class="blk" data-md="##">Say hello</h2>
-    <div class="bookmarks">
-      <a class="bm blk" href="mailto:somalrajupc@gmail.com"><i class="ic" data-i="mail"></i><span class="bm-t">Email</span><span class="bm-u">somalrajupc@gmail.com</span></a>
-      <a class="bm blk" href="https://github.com/THEpranavsomalraju" target="_blank" rel="noopener"><i class="ic" data-i="github"></i><span class="bm-t">GitHub</span><span class="bm-u">THEpranavsomalraju</span></a>
-      <a class="bm blk" href="https://linkedin.com/in/pranavsomalraju" target="_blank" rel="noopener"><i class="ic" data-i="linkedin"></i><span class="bm-t">LinkedIn</span><span class="bm-u">in/pranavsomalraju</span></a>
-      <a class="bm blk" href="tel:+19806220567"><i class="ic" data-i="phone"></i><span class="bm-t">Phone</span><span class="bm-u">(980) 622-0567</span></a>
-    </div>
-    <blockquote class="blk">Pick whichever is easiest. I reply within a day, usually sooner.</blockquote>
+    <h2 data-md="##">Say hello</h2>
+    <dl class="contact">
+      <dt>email</dt><dd><a href="mailto:somalrajupc@gmail.com">somalrajupc@gmail.com</a></dd>
+      <dt>github</dt><dd><a href="https://github.com/THEpranavsomalraju" target="_blank" rel="noopener">THEpranavsomalraju</a></dd>
+      <dt>linkedin</dt><dd><a href="https://linkedin.com/in/pranavsomalraju" target="_blank" rel="noopener">in/pranavsomalraju</a></dd>
+      <dt>phone</dt><dd><a href="tel:+19806220567">(980) 622-0567</a></dd>
+    </dl>
+    <blockquote>Pick whichever is easiest. I reply within a day, usually sooner.</blockquote>
   </section>
 
   <!-- EXPERIENCE -->
   <section class="view" id="v-experience" role="tabpanel" aria-labelledby="t-experience" data-view="experience" hidden>
-    <div class="view-head blk"><h2 data-md="##">Where I've been</h2><span class="meta"><i class="ic" data-i="grid"></i>gallery · 3</span></div>
-    <div class="gallery">
-      <article class="card blk" style="--logo:url(../img/unc.png);--brand:#4B9CD3">
-        <div class="card-cover"><span class="logo"></span><span class="logo tint"></span></div>
-        <div class="card-body"><h3>UNC Chapel Hill</h3><p>Computer science and neuroscience</p><span class="date">present</span></div>
-      </article>
-      <article class="card blk" style="--logo:url(../img/caltech.png);--brand:#FF6C0C">
-        <div class="card-cover"><span class="logo wide"></span><span class="logo wide tint"></span></div>
-        <div class="card-body"><h3>Caltech</h3><p>Deep learning research</p><span class="date">dec 2025 → now</span></div>
-      </article>
-      <article class="card blk" style="--logo:url(../img/duke.png);--brand:#012169;--brand-d:#5b84e6">
-        <div class="card-cover"><span class="logo wide"></span><span class="logo wide tint"></span></div>
-        <div class="card-body"><h3>Duke</h3><p>AI models for pathologists</p><span class="date">sep 2024 → now</span></div>
-      </article>
-    </div>
-
-    <h2 class="blk" data-md="##">Also</h2>
-    <div class="rows">
-      <div class="row blk static"><span class="row-ic"><i class="ic" data-i="book"></i></span><span class="row-t">Harvard Medical School</span><span class="row-m">Research</span></div>
-      <div class="row blk static"><span class="row-ic"><i class="ic" data-i="hospital"></i></span><span class="row-t">UNC Health</span><span class="row-m">Medical assistant, part time</span><span class="tagnow">now</span></div>
-    </div>
+    <ol class="tl" id="tl">
+      <li class="tl-i" style="--logo:url(../img/unc.png);--brand:#4B9CD3;--lw:52px">
+        <span class="tl-when">present</span>
+        <span class="tl-dot" aria-hidden="true"></span>
+        <div class="tl-body">
+          <span class="tl-logo" aria-hidden="true"><span class="logo"></span><span class="logo tint"></span></span>
+          <h3>UNC Chapel Hill</h3>
+          <p><span class="role">Student</span> Computer science and neuroscience.</p>
+        </div>
+      </li>
+      <li class="tl-i" style="--logo:url(../img/caltech.png);--brand:#FF6C0C;--lw:118px">
+        <span class="tl-when">dec 2025 — now</span>
+        <span class="tl-dot" aria-hidden="true"></span>
+        <div class="tl-body">
+          <span class="tl-logo" aria-hidden="true"><span class="logo"></span><span class="logo tint"></span></span>
+          <h3>Caltech</h3>
+          <p><span class="role">Research</span> Deep learning.</p>
+        </div>
+      </li>
+      <li class="tl-i" style="--logo:url(../img/duke.png);--brand:#012169;--brand-d:#5b84e6;--lw:104px">
+        <span class="tl-when">sep 2024 — now</span>
+        <span class="tl-dot" aria-hidden="true"></span>
+        <div class="tl-body">
+          <span class="tl-logo" aria-hidden="true"><span class="logo"></span><span class="logo tint"></span></span>
+          <h3>Duke</h3>
+          <p><span class="role">Research</span> AI models for pathologists.</p>
+        </div>
+      </li>
+      <li class="tl-i plain">
+        <span class="tl-when">now</span>
+        <span class="tl-dot" aria-hidden="true"></span>
+        <div class="tl-body">
+          <h3>UNC Health</h3>
+          <p><span class="role">Work</span> Medical assistant, part time.</p>
+        </div>
+      </li>
+      <li class="tl-i plain">
+        <span class="tl-when">earlier</span>
+        <span class="tl-dot" aria-hidden="true"></span>
+        <div class="tl-body">
+          <h3>Harvard Medical School</h3>
+          <p><span class="role">Research</span></p>
+        </div>
+      </li>
+    </ol>
   </section>
 
   <!-- PROJECTS -->
   <section class="view" id="v-projects" role="tabpanel" aria-labelledby="t-projects" data-view="projects" hidden>
-    <div class="view-head blk"><h2 data-md="##">Stuff I built</h2><span class="meta"><i class="ic" data-i="pointer"></i>hover a tool · open a project</span></div>
-    <figure class="netframe blk">
-      <div class="netscroll"><svg id="net" viewBox="0 0 960 440" role="group" aria-label="Network of the tools I use feeding into the projects they made"></svg></div>
-    </figure>
-
-    <div class="view-head blk"><h2 data-md="##">All projects</h2><span class="meta"><i class="ic" data-i="table"></i>table · 6</span></div>
-    <div class="dbwrap blk">
-      <table class="db" id="db">
-        <thead><tr>
-          <th><i class="ic" data-i="text"></i>Name</th>
-          <th><i class="ic" data-i="shapes"></i>Type</th>
-          <th><i class="ic" data-i="trophy"></i>Note</th>
-          <th class="c-stack"><i class="ic" data-i="tag"></i>Stack</th>
-        </tr></thead>
-        <tbody></tbody>
-      </table>
+    <div class="wide">
+      <svg id="net" viewBox="0 0 1200 440" role="group" aria-label="The tools I use, feeding into the projects they made. Hover or focus a project to read about it."></svg>
     </div>
-    <p class="blk muted small">Everything else lives on <a class="ul" href="https://github.com/THEpranavsomalraju" target="_blank" rel="noopener">GitHub</a>.</p>
+    <article class="detail" id="detail" aria-live="polite"></article>
   </section>
 
   <footer class="foot">
@@ -133,22 +128,10 @@
   </footer>
 </main>
 
-<!-- side peek, Notion style -->
-<div class="scrim" id="scrim"></div>
-<aside class="peek" id="peek" role="dialog" aria-modal="false" aria-labelledby="pk-title" aria-hidden="true">
-  <div class="peek-bar">
-    <button class="tb-btn sq" id="pk-close" aria-label="Close"><i class="ic" data-i="chevrons"></i></button>
-    <button class="tb-btn sq" id="pk-prev" aria-label="Previous project"><i class="ic" data-i="up"></i></button>
-    <button class="tb-btn sq" id="pk-next" aria-label="Next project"><i class="ic" data-i="down"></i></button>
-    <a class="tb-btn pk-open" id="pk-open" target="_blank" rel="noopener"><span id="pk-open-t">Open</span><i class="ic" data-i="arrow"></i></a>
-  </div>
-  <div class="peek-body" id="peek-body"></div>
-</aside>
-
 <!-- command palette -->
 <div class="palette" id="palette" role="dialog" aria-modal="true" aria-label="Commands" hidden>
   <div class="pal-box">
-    <div class="pal-in"><i class="ic" data-i="search"></i><input id="pal-q" type="text" placeholder="Jump to a page, a project, or an action…" autocomplete="off" spellcheck="false" aria-controls="pal-list" /><kbd>esc</kbd></div>
+    <div class="pal-in"><input id="pal-q" type="text" placeholder="Jump to a page, a project, or an action…" autocomplete="off" spellcheck="false" aria-controls="pal-list" /><kbd>esc</kbd></div>
     <div class="pal-list" id="pal-list" role="listbox"></div>
   </div>
 </div>

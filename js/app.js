@@ -108,7 +108,6 @@ function setTab(name,{instant=false}={}){
   });
   moveInk(instant);
   document.title=name==='home'?'Pranav Somalraju':`${TABS[name]} · Pranav Somalraju`;
-  if(name==='experience')timeline.run();
   if(name==='projects')net.enter(); else net.leave();
 }
 function route(){
@@ -129,14 +128,14 @@ addEventListener('resize',()=>moveInk(true));
 if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>moveInk(true));
 
 // ───────────────────────── experience ─────────────────────────
-const timeline={
-  run(){
-    const tl=$('#tl');
-    $$('.tl-dot',tl).forEach((d,n)=>d.style.setProperty('--n',n));
-    tl.classList.remove('run');
-    if(!reduce){void tl.offsetWidth;tl.classList.add('run')}
-  }
-};
+// rows with more to say open like a toggle. the closed panel is inert, so its
+// links stay out of the tab order until it is open
+$$('#xp button.xp-row').forEach(b=>b.addEventListener('click',()=>{
+  const li=b.closest('.xp-i'),open=!li.classList.contains('open');
+  li.classList.toggle('open',open);b.setAttribute('aria-expanded',open);
+  $('#'+b.getAttribute('aria-controls')).inert=!open;
+}));
+
 
 // ───────────────────────── projects: network + readout ─────────────────────────
 const net=(()=>{
@@ -524,7 +523,7 @@ $$('time.ago').forEach(t=>{
   }
   function go(){
     if(document.hidden||!pal.hidden||innerWidth<760){arm();return}
-    const vis=$$('.view:not([hidden]) :is(p,li,h2,blockquote,.tl-body,dd)').filter(el=>{
+    const vis=$$('.view:not([hidden]) :is(p,li,h2,blockquote,dd)').filter(el=>{
       const r=el.getBoundingClientRect();return r.top>70&&r.bottom<innerHeight-30&&r.height<160&&r.width>60;
     });
     if(vis.length<2){arm();return}

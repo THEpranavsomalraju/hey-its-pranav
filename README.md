@@ -1,6 +1,6 @@
 # hey-its-pranav
 
-Pranav Somalraju's personal site. A single page laid out like a document, with three tabs: Home (bio, recent wins, contact, a live GitHub contribution skyline, and what's been playing on Spotify), Experience (a timeline), and Projects (a network of shared tools feeding into each project, with the project's details underneath).
+Pranav Somalraju's personal site. A single page laid out like a document, with three tabs: Home (bio, recent wins, contact, a live GitHub contribution skyline, and what's been playing on Spotify), Experience (one row per role; each opens like a toggle onto a line about what was done there, with the standout numbers highlighted), and Projects (a network of shared tools feeding into each project, with the project's details underneath).
 
 Live at **https://pranavsomalraju.dev**
 
@@ -17,7 +17,7 @@ Plain HTML, CSS, and vanilla JS. No build step and no dependencies; the only ser
 - `api/listening.js` — Vercel function returning the current Spotify track and recently played ones, with album art
 - `scripts/spotify-token.mjs` — one-time local helper that mints the Spotify refresh token
 - `portrait.jpg` — the portrait at the top of the page
-- `img/` — the timeline logos (cropped to their visible edges; `unchealth-dark.svg` is the reversed mark for dark mode) and `share.png`, the 1200×630 social share card (portrait and name)
+- `img/` — the experience marks and `share.png`, the 1200×630 social share card (portrait and name). Every mark sits in the same 40px square tile, so each is the organisation's own small-square mark: `caltech-mark.png` and `duke-mark.png` are the official app icons from caltech.edu and duke.edu, `unchealth.svg` is the stacked lockup UNC Health uses as its own favicon (`unchealth-dark.svg` is the reversed version for dark mode), `atc.svg` and `hms.svg` are already square. A wide wordmark shrinks to a sliver in a square, so don't use one there. `unc.png` is the bio's pop-up logo
 - `favicon.svg`, `favicon.ico`, `favicon-32.png`, `apple-touch-icon.png` — the **ps** monogram. The SVG reverses itself in dark browsers; the rasters are the ink tile, and the touch icon is full-bleed because iOS rounds it
 
 `api/` is CommonJS on purpose: with no `package.json` a `.js` file is CJS on Vercel, so an ESM `export default` would fail at runtime. The local helper is `.mjs` and is therefore unambiguously ESM.

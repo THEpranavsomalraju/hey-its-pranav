@@ -214,24 +214,47 @@ const net=(()=>{
       <div class="d-links">${links}</div>`;
     if(anim&&!reduce){detail.classList.remove('swap');void detail.offsetWidth;detail.classList.add('swap')}
   }
-  function select(k){
+  function choose(k){
     if(k<0||k>=PROJECTS.length)return;
     const changed=k!==sel;sel=k;show(k);
     if(changed)render(k,true);
   }
+  // left alone, it walks through the projects one at a time. pointing at the
+  // net or the readout holds it where it is; picking a project (a click, a
+  // link, the palette) ends the walk for this visit, so it never moves away
+  // from something you chose
+  const WALK_MS=4500;
+  let walkT=0,walking=false,held=0;
+  function walk(){
+    clearTimeout(walkT);
+    if(!walking||reduce)return;
+    walkT=setTimeout(()=>{if(walking&&!held&&!document.hidden)choose((sel+1)%PROJECTS.length);walk()},WALK_MS);
+  }
+  function stopWalk(){walking=false;clearTimeout(walkT)}
+  // only an actual node, or the readout, holds it. the net is nearly as wide
+  // as the window, so a pointer merely resting over its empty space would
+  // otherwise freeze the walk for good
+  const hold=on=>{held=Math.max(0,held+(on?1:-1));if(!held)walk()};   // the next step comes a full beat after you let go
+  detail.addEventListener('pointerenter',()=>hold(true));
+  detail.addEventListener('pointerleave',()=>hold(false));
+  [svg,detail].forEach(el=>{
+    el.addEventListener('focusin',()=>hold(true));
+    el.addEventListener('focusout',e=>{if(!el.contains(e.relatedTarget))hold(false)});
+  });
+  function select(k){stopWalk();choose(k)}
 
   // delegated, so a redraw keeps working without rewiring
   const target=e=>{const o=e.target.closest('.no');if(o)return{k:+o.dataset.o,el:o};const n=e.target.closest('.ni');if(n)return{i:+n.dataset.i,el:n};return null};
   svg.addEventListener('pointerover',e=>{
     const t=target(e);if(!t||(e.relatedTarget&&t.el.contains(e.relatedTarget)))return;
-    hover=true;t.k!=null?select(t.k):showInput(t.i);
+    hover=true;hold(true);t.k!=null?choose(t.k):showInput(t.i);
   });
   svg.addEventListener('pointerout',e=>{
     const t=target(e);if(!t||(e.relatedTarget&&t.el.contains(e.relatedTarget)))return;
-    hover=false;show(sel);
+    hover=false;hold(false);show(sel);
   });
   svg.addEventListener('click',e=>{const t=target(e);if(t&&t.k!=null)select(t.k)});
-  svg.addEventListener('focusin',e=>{const t=target(e);if(t&&t.k!=null)select(t.k)});
+  svg.addEventListener('focusin',e=>{const t=target(e);if(t&&t.k!=null)choose(t.k)});
 
   // first visit: the wiring knits itself together, quickly, once
   function build(){
@@ -253,8 +276,10 @@ const net=(()=>{
   narrow.addEventListener('change',draw);
   if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>requestAnimationFrame(fit));
   return{
-    enter(){fit();if(!built)build()},
-    leave(){},
+    // every visit starts the walk again from 01; a link straight to a project
+    // calls select() right after this and stops it
+    enter(){fit();if(!built)build();held=0;walking=!reduce;choose(0);walk()},
+    leave(){stopWalk()},
     select,
     step(dir){select((sel+dir+PROJECTS.length)%PROJECTS.length)}
   };

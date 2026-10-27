@@ -1,6 +1,6 @@
 # hey-its-pranav
 
-Pranav Somalraju's personal site. A single page laid out like a document, with three tabs: Home (bio, recent wins, contact, a live GitHub contribution skyline, and what's been playing on Spotify), Experience (one row per role; each opens like a toggle onto a line about what was done there, with the standout numbers highlighted), and Projects (a network of shared tools feeding into each project, with the project's details underneath).
+Pranav Somalraju's personal site. A single page laid out like a document, with three tabs: Home (bio, recent wins, contact, a live GitHub contribution skyline, and what's been playing on Spotify), Experience (one row per role; each opens like a toggle onto a line about what was done there, with the standout numbers highlighted), and Projects (a network of shared tools feeding into each project, with the project's details underneath; left alone it walks through the projects, and choosing one stops it).
 
 Live at **https://pranavsomalraju.dev**
 

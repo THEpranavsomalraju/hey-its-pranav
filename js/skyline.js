@@ -9,6 +9,9 @@
  *
  *   const sky = ContributionSkyline.mount(el, { data:[{date,count}], palette:'mono' })
  *   sky.setData(days)   // live refresh
+ *
+ * lift:'view' (default) rises into defaultView once the chart has been on screen
+ * a moment; lift:'hover' rests flat and rises only while it is pointed at.
  */
 window.ContributionSkyline=(function(){
 'use strict';
@@ -132,7 +135,7 @@ const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'
 // ───────────── the component ─────────────
 function mount(host,opts={}){
   const o=Object.assign({data:[],endDate:null,palette:'mono',unit:'contribution',unitPlural:null,heightScale:1,duration:1300,
-    weekStart:0,orbit:true,defaultView:'3d',locale:'en-US',title:null,enterDelay:1100,enterRatio:.6},opts);
+    weekStart:0,orbit:true,defaultView:'3d',locale:'en-US',title:null,enterDelay:1100,enterRatio:.6,lift:'view'},opts);
   const plural=o.unitPlural||o.unit+'s',locale=o.locale;
   const nf=new Intl.NumberFormat(locale);
   const df=new Intl.DateTimeFormat(locale,{month:'short',day:'numeric',timeZone:'UTC'});
@@ -142,7 +145,7 @@ function mount(host,opts={}){
   const range=(a,b,withYear)=>!a||!b?'—':(withYear?dfy:df).format(dayMs(a))+' — '+(withYear?dfy:df).format(dayMs(b));
   const ease='cubic-bezier(0.65, 0, 0.35, 1)';
 
-  let model,view=o.defaultView,legendLevel=-1,activeI=-1,width=0,accent='#000',swatches=[];
+  let model,view=o.defaultView,legendLevel=-1,activeI=-1,width=0,accent='#000',swatches=[],chosen=false;
   function computeModel(days){
     const dates=days.map(d=>dayMs(d.date)).filter(Number.isFinite);
     const end=o.endDate!=null?dayMs(o.endDate):(dates.length?Math.max(...dates):dayMs(new Date()));
@@ -163,7 +166,7 @@ function mount(host,opts={}){
   ['2d','3d'].forEach(v=>{
     const b=el('button','sk-tbtn',v);b.type='button';
     b.setAttribute('aria-label',v==='2d'?'Flat heat map':'3D skyline');b.title=v==='2d'?'Flat heat map':'3D skyline';
-    b.addEventListener('click',()=>setView(v));btns[v]=b;toggle.appendChild(b);
+    b.addEventListener('click',()=>{chosen=true;setView(v)});btns[v]=b;toggle.appendChild(b);
   });
   head.append(title,toggle);
   const frame=el('div','sk-frame');
@@ -504,12 +507,27 @@ function mount(host,opts={}){
   // only once most of it is on screen and has stayed there a moment, so the
   // flat map gets read before it lifts. scroll away first and it waits.
   const enter=()=>{if(entered)return;entered=true;if(reduced)t=view==='3d'?1:0;renderChrome();setTarget()};
-  io=new IntersectionObserver(es=>{
-    const seen=es.some(e=>e.isIntersecting&&e.intersectionRatio>=o.enterRatio);
-    if(seen&&!enterT)enterT=setTimeout(()=>{enter();io.disconnect()},o.enterDelay);
-    else if(!seen&&enterT){clearTimeout(enterT);enterT=0}
-  },{threshold:[0,o.enterRatio]});
-  io.observe(stage);
+  if(o.lift==='hover'){
+    // lift:'hover' rests on the flat map and rises only while a pointer is
+    // over the chart, then settles back when it leaves. only the stage counts:
+    // it grows as it lifts, so the pointer stays inside it and the view can't
+    // flicker between the two. touch screens keep the toggle. clicking the
+    // toggle is a choice, and ends the hovering
+    view='2d';entered=true;renderText();renderChrome();
+    if(matchMedia('(hover: hover)').matches){
+      let leaveT=0;
+      stage.addEventListener('pointerenter',()=>{if(chosen)return;clearTimeout(leaveT);if(view!=='3d')setView('3d')});
+      stage.addEventListener('pointerleave',()=>{if(chosen)return;clearTimeout(leaveT);
+        leaveT=setTimeout(()=>{if(!drag&&!chosen)setView('2d')},160)});
+    }
+  }else{
+    io=new IntersectionObserver(es=>{
+      const seen=es.some(e=>e.isIntersecting&&e.intersectionRatio>=o.enterRatio);
+      if(seen&&!enterT)enterT=setTimeout(()=>{enter();io.disconnect()},o.enterDelay);
+      else if(!seen&&enterT){clearTimeout(enterT);enterT=0}
+    },{threshold:[0,o.enterRatio]});
+    io.observe(stage);
+  }
   const ro=new ResizeObserver(()=>{if(Math.round(stage.clientWidth)!==W)relayout()});ro.observe(stage);
   const mo=new MutationObserver(retheme);mo.observe(document.documentElement,{attributes:true,attributeFilter:['class','style','data-theme']});
   reduceMq.addEventListener('change',()=>{reduced=reduceMq.matches;kick()});

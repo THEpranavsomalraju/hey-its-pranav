@@ -433,7 +433,7 @@ $$('time.ago').forEach(t=>{
         if(key===shown)return;shown=key;
         host.hidden=false;
         if(sky)sky.setData(d.days);
-        else sky=window.ContributionSkyline.mount(host,{data:d.days,palette:'github'});
+        else sky=window.ContributionSkyline.mount(host,{data:d.days,palette:'github',lift:'hover',duration:780});
       }).catch(()=>{});
   }
   load();setInterval(()=>{if(!document.hidden)load()},10*60*1000);

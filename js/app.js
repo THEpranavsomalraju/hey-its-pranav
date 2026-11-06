@@ -85,7 +85,7 @@ addEventListener('scroll',()=>$('#topbar').classList.toggle('scrolled',scrollY>4
 })();
 
 // ───────────────────────── tabs ─────────────────────────
-const TABS={home:'Home',experience:'Experience',projects:'Projects'};
+const TABS={home:'Home',experience:'Experience',projects:'Projects',opensource:'Open source'};
 const tabBtns=$$('.tab');
 let curTab=null;
 function moveInk(instant){
@@ -109,6 +109,7 @@ function setTab(name,{instant=false}={}){
   moveInk(instant);
   document.title=name==='home'?'Pranav Somalraju':`${TABS[name]} · Pranav Somalraju`;
   if(name==='projects')net.enter(); else net.leave();
+  if(name==='opensource')oss.enter();
 }
 function route(){
   const [tab,pid]=location.hash.replace(/^#/,'').split('/');
@@ -285,6 +286,247 @@ const net=(()=>{
   };
 })();
 
+// ───────────────────────── open source ─────────────────────────
+// my public open-source activity from /api/opensource, drawn the way GitHub
+// draws a timeline: the state of each thing in its own colour, the project
+// and its stars, comments as cards, newest first under a month that stays
+// pinned while you scroll. fetched the first time the tab opens
+const oss=(()=>{
+  const host=$('#os');
+  // GitHub's own octicons (MIT, © GitHub Inc.), so the states read the way they do there
+  const OCT={"issue-reopened":["M5.029 2.217a6.5 6.5 0 0 1 9.437 5.11.75.75 0 1 0 1.492-.154 8 8 0 0 0-14.315-4.03L.427 1.927A.25.25 0 0 0 0 2.104V5.75A.25.25 0 0 0 .25 6h3.646a.25.25 0 0 0 .177-.427L2.715 4.215a6.491 6.491 0 0 1 2.314-1.998ZM1.262 8.169a.75.75 0 0 0-1.22.658 8.001 8.001 0 0 0 14.315 4.03l1.216 1.216a.25.25 0 0 0 .427-.177V10.25a.25.25 0 0 0-.25-.25h-3.646a.25.25 0 0 0-.177.427l1.358 1.358a6.501 6.501 0 0 1-11.751-3.11.75.75 0 0 0-.272-.506Z","M9.06 9.06a1.5 1.5 0 1 1-2.12-2.12 1.5 1.5 0 0 1 2.12 2.12Z"],"comment":["M1 2.75C1 1.784 1.784 1 2.75 1h10.5c.966 0 1.75.784 1.75 1.75v7.5A1.75 1.75 0 0 1 13.25 12H9.06l-2.573 2.573A1.458 1.458 0 0 1 4 13.543V12H2.75A1.75 1.75 0 0 1 1 10.25Zm1.75-.25a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h2a.75.75 0 0 1 .75.75v2.19l2.72-2.72a.749.749 0 0 1 .53-.22h4.5a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"],"eye":["M8 2c1.981 0 3.671.992 4.933 2.078 1.27 1.091 2.187 2.345 2.637 3.023a1.62 1.62 0 0 1 0 1.798c-.45.678-1.367 1.932-2.637 3.023C11.67 13.008 9.981 14 8 14c-1.981 0-3.671-.992-4.933-2.078C1.797 10.83.88 9.576.43 8.898a1.62 1.62 0 0 1 0-1.798c.45-.677 1.367-1.931 2.637-3.022C4.33 2.992 6.019 2 8 2ZM1.679 7.932a.12.12 0 0 0 0 .136c.411.622 1.241 1.75 2.366 2.717C5.176 11.758 6.527 12.5 8 12.5c1.473 0 2.825-.742 3.955-1.715 1.124-.967 1.954-2.096 2.366-2.717a.12.12 0 0 0 0-.136c-.412-.621-1.242-1.75-2.366-2.717C10.824 4.242 9.473 3.5 8 3.5c-1.473 0-2.825.742-3.955 1.715-1.124.967-1.954 2.096-2.366 2.717ZM8 10a2 2 0 1 1-.001-3.999A2 2 0 0 1 8 10Z"],"git-merge":["M5.45 5.154A4.25 4.25 0 0 0 9.25 7.5h1.378a2.251 2.251 0 1 1 0 1.5H9.25A5.734 5.734 0 0 1 5 7.123v3.505a2.25 2.25 0 1 1-1.5 0V5.372a2.25 2.25 0 1 1 1.95-.218ZM4.25 13.5a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Zm8.5-4.5a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5ZM5 3.25a.75.75 0 1 0 0 .005V3.25Z"],"git-pull-request-closed":["M3.25 1A2.25 2.25 0 0 1 4 5.372v5.256a2.251 2.251 0 1 1-1.5 0V5.372A2.251 2.251 0 0 1 3.25 1Zm9.5 5.5a.75.75 0 0 1 .75.75v3.378a2.251 2.251 0 1 1-1.5 0V7.25a.75.75 0 0 1 .75-.75Zm-2.03-5.273a.75.75 0 0 1 1.06 0l.97.97.97-.97a.748.748 0 0 1 1.265.332.75.75 0 0 1-.205.729l-.97.97.97.97a.751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018l-.97-.97-.97.97a.749.749 0 0 1-1.275-.326.749.749 0 0 1 .215-.734l.97-.97-.97-.97a.75.75 0 0 1 0-1.06ZM2.5 3.25a.75.75 0 1 0 1.5 0 .75.75 0 0 0-1.5 0ZM3.25 12a.75.75 0 1 0 0 1.5.75.75 0 0 0 0-1.5Zm9.5 0a.75.75 0 1 0 0 1.5.75.75 0 0 0 0-1.5Z"],"git-pull-request-draft":["M3.25 1A2.25 2.25 0 0 1 4 5.372v5.256a2.251 2.251 0 1 1-1.5 0V5.372A2.251 2.251 0 0 1 3.25 1Zm9.5 14a2.25 2.25 0 1 1 0-4.5 2.25 2.25 0 0 1 0 4.5ZM2.5 3.25a.75.75 0 1 0 1.5 0 .75.75 0 0 0-1.5 0ZM3.25 12a.75.75 0 1 0 0 1.5.75.75 0 0 0 0-1.5Zm9.5 0a.75.75 0 1 0 0 1.5.75.75 0 0 0 0-1.5ZM14 7.5a1.25 1.25 0 1 1-2.5 0 1.25 1.25 0 0 1 2.5 0Zm0-4.25a1.25 1.25 0 1 1-2.5 0 1.25 1.25 0 0 1 2.5 0Z"],"git-pull-request":["M1.5 3.25a2.25 2.25 0 1 1 3 2.122v5.256a2.251 2.251 0 1 1-1.5 0V5.372A2.25 2.25 0 0 1 1.5 3.25Zm5.677-.177L9.573.677A.25.25 0 0 1 10 .854V2.5h1A2.5 2.5 0 0 1 13.5 5v5.628a2.251 2.251 0 1 1-1.5 0V5a1 1 0 0 0-1-1h-1v1.646a.25.25 0 0 1-.427.177L7.177 3.427a.25.25 0 0 1 0-.354ZM3.75 2.5a.75.75 0 1 0 0 1.5.75.75 0 0 0 0-1.5Zm0 9.5a.75.75 0 1 0 0 1.5.75.75 0 0 0 0-1.5Zm8.25.75a.75.75 0 1 0 1.5 0 .75.75 0 0 0-1.5 0Z"],"issue-closed":["M11.28 6.78a.75.75 0 0 0-1.06-1.06L7.25 8.69 5.78 7.22a.75.75 0 0 0-1.06 1.06l2 2a.75.75 0 0 0 1.06 0l3.5-3.5Z","M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0Zm-1.5 0a6.5 6.5 0 1 0-13 0 6.5 6.5 0 0 0 13 0Z"],"issue-opened":["M8 9.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3Z","M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0ZM1.5 8a6.5 6.5 0 1 0 13 0 6.5 6.5 0 0 0-13 0Z"],"skip":["M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0ZM1.5 8a6.5 6.5 0 1 0 13 0 6.5 6.5 0 0 0-13 0Zm9.78-2.22-5.5 5.5a.749.749 0 0 1-1.275-.326.749.749 0 0 1 .215-.734l5.5-5.5a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042Z"],"star":["M8 .25a.75.75 0 0 1 .673.418l1.882 3.815 4.21.612a.75.75 0 0 1 .416 1.279l-3.046 2.97.719 4.192a.751.751 0 0 1-1.088.791L8 12.347l-3.766 1.98a.75.75 0 0 1-1.088-.79l.72-4.194L.818 6.374a.75.75 0 0 1 .416-1.28l4.21-.611L7.327.668A.75.75 0 0 1 8 .25Zm0 2.445L6.615 5.5a.75.75 0 0 1-.564.41l-3.097.45 2.24 2.184a.75.75 0 0 1 .216.664l-.528 3.084 2.769-1.456a.75.75 0 0 1 .698 0l2.77 1.456-.53-3.084a.75.75 0 0 1 .216-.664l2.24-2.183-3.096-.45a.75.75 0 0 1-.564-.41L8 2.694Z"]};
+  const ic=(n,c='')=>`<svg class="oc${c?' '+c:''}" viewBox="0 0 16 16" aria-hidden="true">${OCT[n].map(d=>`<path d="${d}"/>`).join('')}</svg>`;
+  const STATES={
+    pr:{open:['git-pull-request','Open','open'],draft:['git-pull-request-draft','Draft','muted'],merged:['git-merge','Merged','merged'],closed:['git-pull-request-closed','Closed','closed']},
+    issue:{open:['issue-opened','Open','open'],completed:['issue-closed','Closed','done'],not_planned:['skip','Not planned','muted']}
+  };
+  const FILTERS=[['all','All'],['pr','Pull requests'],['issue','Issues'],['comment','Comments']];
+  const group=i=>i.kind==='review'?'comment':i.kind;
+  const stars=n=>n>=1000?(n/1000).toFixed(n>=10000?0:1).replace(/\.0$/,'')+'k':String(n);
+  const plural=(n,one,many)=>`<b>${n}</b> ${n===1?one:many}`;
+  // titles, as GitHub shows them: `code` in backticks set as code (escaped first, like everything else)
+  const title=t=>esc(t).replace(/`([^`]+)`/g,'<code>$1</code>');
+  // when, as it happened: the time of day for anything this week, so two
+  // comments on one thread read as last night and this morning, not as one
+  // moment; the date for anything older. the tooltip has the whole timestamp
+  const clock=d=>d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
+  const ago=iso=>{const d=new Date(iso),now=new Date(),y=new Date(now);y.setDate(now.getDate()-1);
+    if(d.toDateString()===now.toDateString())return 'today '+clock(d);
+    if(d.toDateString()===y.toDateString())return 'yesterday '+clock(d);
+    if(now-d<6*86400000)return d.toLocaleDateString('en-US',{weekday:'short'})+' '+clock(d);
+    return d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:d.getFullYear()===now.getFullYear()?undefined:'numeric'})};
+  const full=iso=>new Date(iso).toLocaleString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric',hour:'numeric',minute:'2-digit'});
+  const month=iso=>new Date(iso).toLocaleDateString('en-US',{month:'long',year:'numeric',timeZone:'UTC'});
+  let data=null,fetchedAt=0,loading=false,filter='all',limit=24,uid=0;
+  const opened=new Set();   // open dropdowns survive a filter change or a longer list
+  const CHEV='<svg class="os-chev" viewBox="0 0 12 12" aria-hidden="true"><path d="M4.5 2.5 8 6l-3.5 3.5"/></svg>';
+  const GO='<svg class="go-ic" viewBox="0 0 12 12" aria-hidden="true"><path d="M3.5 8.5 8.5 3.5M4.5 3.5h4v4"/></svg>';
+
+  // GitHub's markdown, rendered here from the raw text rather than taken as
+  // HTML: everything is escaped first, and only these tags are ever added, so
+  // a stranger's comment can't put anything onto the page
+  function md(src){
+    const stash=[],keep=h=>'\u0000'+(stash.push(h)-1)+'\u0000';
+    const ext='target="_blank" rel="noopener"';
+    const inline=raw=>esc(raw)
+      .replace(/`([^`\n]+)`/g,(_,c)=>keep(`<code>${c}</code>`))
+      .replace(/!\[[^\]]*\]\((https?:\/\/[^)\s]+)\)/g,(_,u)=>keep(`<a href="${u}" ${ext}>image</a>`))
+      .replace(/\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)/g,(_,t,u)=>keep(`<a href="${u}" ${ext}>${t}</a>`))
+      .replace(/(^|[\s(])(https?:\/\/[^\s<)]+)/g,(_,b,u)=>b+keep(`<a href="${u}" ${ext}>${u.replace(/^https?:\/\/(www\.)?/,'')}</a>`))
+      .replace(/(^|[\s(])@([A-Za-z0-9](?:[A-Za-z0-9-]{0,38}))\b/g,(_,b,n)=>b+keep(`<a class="os-at" href="https://github.com/${n}" ${ext}>@${n}</a>`))
+      .replace(/\*\*([^*\n]+)\*\*/g,'<strong>$1</strong>')
+      .replace(/(^|[\s(])[*_](?=\S)([^*_]+?)[*_](?=[\s).,:;!?]|$)/g,'$1<em>$2</em>')   // _word_ only at word edges, so snake_case stays put; may run across lines of one paragraph
+      .replace(/\u0000(\d+)\u0000/g,(_,k)=>stash[k]);
+    const block=t=>t.split(/\n{2,}/).map(p=>p.replace(/^\n+|\n+$/g,'')).filter(Boolean).map(p=>{
+      const L=p.split('\n');
+      if(L.every(l=>/^\s*>/.test(l))){
+        // a quote can hold lists and paragraphs of its own; GitHub's > [!NOTE] style alerts get their label
+        let q=L.map(l=>l.replace(/^\s*>\s?/,'')).join('\n');
+        const al=/^\[!(NOTE|TIP|IMPORTANT|WARNING|CAUTION)\]\s*/i.exec(q);
+        if(al)q=q.slice(al[0].length);
+        return `<blockquote${al?' class="os-alert"':''}>${al?`<p><strong>${al[1][0]+al[1].slice(1).toLowerCase()}</strong></p>`:''}${block(q)}</blockquote>`;
+      }
+      // runs of list lines become lists and the lines between them stay text,
+      // so "Before you start:" followed by "- one" reads as GitHub shows it
+      const isLi=l=>/^\s*(?:[-*+]|\d+\.)\s/.test(l),runs=[];
+      for(const l of L){const li=isLi(l),r=runs[runs.length-1];if(r&&r.li===li)r.lines.push(l);else runs.push({li,lines:[l]})}
+      return runs.map(r=>r.li
+        ?`<ul>${r.lines.map(l=>`<li>${inline(l.replace(/^\s*(?:[-*+]|\d+\.)\s+(?:\[[ xX]\]\s*)?/,''))}</li>`).join('')}</ul>`
+        :`<p>${r.lines.some(l=>/^#{1,6}\s/.test(l))
+            ?r.lines.map(l=>/^#{1,6}\s/.test(l)?`<strong>${inline(l.replace(/^#+\s*/,''))}</strong>`:inline(l)).join('<br>')
+            :inline(r.lines.join('\n')).replace(/\n/g,'<br>')}</p>`).join('');   // inline over the whole run, so emphasis can wrap a line
+    }).join('');
+    let html='',last=0,m;const fence=/^\s*```[^\n]*\n([\s\S]*?)^\s*```\s*$/gm;
+    while((m=fence.exec(src))){html+=block(src.slice(last,m.index))+`<pre><code>${esc(m[1].replace(/\n$/,''))}</code></pre>`;last=fence.lastIndex}
+    return html+block(src.slice(last));
+  }
+  const ROLE={OWNER:'Owner',MEMBER:'Member',COLLABORATOR:'Collaborator',CONTRIBUTOR:'Contributor',FIRST_TIME_CONTRIBUTOR:'First-time contributor',FIRST_TIMER:'First-time contributor'};
+  const day=iso=>new Date(iso).toLocaleString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'});
+  function say(c,t,verb,focus){
+    const me=c.who.login.toLowerCase()===data.user.toLowerCase();
+    const roles=[ROLE[c.role],c.who.login===t.opener.who.login?'Author':null].filter(Boolean)
+      .map(r=>`<span class="os-role">${r}</span>`).join('');
+    const ext='target="_blank" rel="noopener"';
+    const av=c.who.avatar?`<img src="${esc(c.who.avatar)}" alt="" width="28" height="28" loading="lazy" decoding="async">`:'';
+    return `<div class="os-say${me?' me':''}${focus?' focus':''}"><a class="os-av" href="${esc(c.who.url)}" ${ext} tabindex="-1" aria-hidden="true">${av}</a>`+
+      `<div class="os-say-box"><div class="os-say-h"><a class="os-who" href="${esc(c.who.url)}" ${ext}>${esc(c.who.login)}</a>`+
+      `<span>${verb}</span><a class="os-say-when" href="${esc(c.url)}" ${ext}><time datetime="${esc(c.at)}" title="${full(c.at)}">${day(c.at)}</time></a>`+
+      (c.edited?`<span class="os-edited" title="Edited since. This is its current text">edited</span>`:'')+
+      `<span class="os-roles">${roles}</span></div>`+
+      `<div class="os-md">${c.md?md(c.md):'<p class="os-quiet">No description provided.</p>'}`+
+      (c.more?`<a class="os-rest" href="${esc(c.url)}" ${ext}>Read the rest on GitHub${GO}</a>`:'')+`</div></div></div>`;
+  }
+  function event(e,t){
+    const ext='target="_blank" rel="noopener"',who=`<b>${esc(e.actor)}</b>`,when=`<time datetime="${esc(e.at)}" title="${full(e.at)}">${day(e.at)}</time>`;
+    let icon,tone,text;
+    if(e.type==='merged'){icon='git-merge';tone='merged';text='merged this'}
+    else if(e.type==='closed'){
+      if(t.kind==='pr'){icon='git-pull-request-closed';tone='closed';text='closed this'}
+      else if(e.reason==='not_planned'||e.reason==='duplicate'){icon='skip';tone='muted';text='closed this as not planned'}
+      else{icon='issue-closed';tone='done';text='closed this as completed'}}
+    else if(e.type==='reopened'){icon=t.kind==='pr'?'git-pull-request':'issue-reopened';tone='open';text='reopened this'}
+    else if(e.type==='crossreferenced'&&e.ref){icon=e.ref.kind==='pr'?'git-pull-request':'issue-opened';tone='muted';
+      text=`mentioned this in <a href="${esc(e.ref.url)}" ${ext}>${title(e.ref.title)} <span class="os-num">#${e.ref.num}</span></a>`}
+    else return '';
+    return `<div class="os-evt t-${tone}"><span class="os-evt-ic">${ic(OCT[icon]?icon:'issue-opened')}</span><span class="os-evt-t">${who} ${text} ${when}</span></div>`;
+  }
+  // the thread as it stood at a moment: its state replayed from the events
+  // up to then (open until closed, merged or reopened), and only what had
+  // been posted by then
+  function stateAt(t,at){
+    let st='open';
+    for(const e of t.events.filter(e=>e.at<=at).sort((x,y)=>x.at<y.at?-1:1)){
+      if(e.type==='merged')st='merged';
+      else if(e.type==='closed')st=t.kind==='pr'?'closed':(e.reason==='not_planned'||e.reason==='duplicate'?'not_planned':'completed');
+      else if(e.type==='reopened')st='open';
+    }
+    return st;
+  }
+  function conversation(i){
+    const t=data.threads&&data.threads[i.thread];
+    if(!t)return '';
+    const upTo=x=>x.at<=i.at;
+    // this entry's own comment is outlined, the way GitHub marks a comment you
+    // followed a link to. if it's older than the comments fetched with the
+    // thread, it is placed in from the entry itself
+    const comments=t.comments.slice();
+    if(i.kind==='comment'&&!comments.some(c=>c.url===i.url))
+      comments.push({at:i.at,url:i.url,role:i.role,md:i.md,more:i.more,who:{login:data.user,url:'https://github.com/'+data.user,avatar:null}});
+    const then=comments.filter(upTo),later=comments.length-then.length+t.events.filter(e=>!upTo(e)).length;   // later replies, or a later close or merge
+    // comments older than the ones fetched: a count when they all came before this
+    // moment, otherwise just the way to them
+    const unseen=t.total-t.comments.length,firstFetched=t.comments.length?t.comments[0].at:null;
+    const earlier=unseen<=0?'':!firstFetched||firstFetched<=i.at
+      ?`${unseen} earlier comment${unseen>1?'s':''} on GitHub`:'Earlier comments on GitHub';
+    const flow=[...then.map(c=>({at:c.at,h:say(c,t,'commented',c.url===i.url)})),...t.events.filter(upTo).map(e=>({at:e.at,h:event(e,t)}))]
+      .sort((a,b)=>a.at<b.at?-1:1).map(x=>x.h).join('');
+    return say(t.opener,t,`opened this ${t.kind==='pr'?'pull request':'issue'}`)+
+      (earlier?`<a class="os-earlier" href="${esc(t.url)}" target="_blank" rel="noopener">${earlier}${GO}</a>`:'')+flow+
+      (later?`<a class="os-earlier os-after" href="${esc(t.url)}" target="_blank" rel="noopener">The thread continued after this. Read it on GitHub${GO}</a>`:'');
+  }
+
+  function item(i){
+    const repo=data.repos[i.repo]||{name:i.repo,url:'https://github.com/'+i.repo,stars:0};
+    const thread=i.kind==='pr'||i.on==='pr'||i.kind==='review'?'pr':'issue';
+    // a comment or review shows the thread's state when it was written, not today's
+    const tt=(i.kind==='comment'||i.kind==='review')&&data.threads&&data.threads[i.thread];
+    const st=tt?stateAt(tt,i.at):i.state;
+    const [sIc,sLabel,tone]=(STATES[thread][st]||STATES[thread].open);
+    const ext='target="_blank" rel="noopener"';
+    const where=`<a class="os-repo" href="${esc(repo.url)}" ${ext}>${esc(repo.name)}</a>`+
+      (repo.stars?`<span class="os-stars" title="${repo.stars.toLocaleString('en-US')} stars">${ic('star')}${stars(repo.stars)}</span>`:'');
+    const when=`<time datetime="${esc(i.at)}" title="${full(i.at)}">${ago(i.at)}</time>`;
+    let verb,badge,body;
+    if(i.kind==='pr'||i.kind==='issue'){
+      verb=i.kind==='pr'?'Opened a pull request in':'Opened an issue in';
+      badge=`<span class="os-ic solid">${ic(sIc)}</span>`;
+      body=`<p class="os-t"><a class="os-title" href="${esc(i.url)}" ${ext}>${title(i.title)}</a> <span class="os-num">#${i.num}</span>`+
+        ` <span class="os-pill">${ic(sIc)}${sLabel}</span></p>`;
+    }else{
+      const what=thread==='pr'?'a pull request':'an issue';
+      verb=i.kind==='review'?({approved:'Approved',changes_requested:'Requested changes on'}[i.verdict]||'Reviewed')+' '+what+' in'
+        :`Commented on ${what} in`;
+      badge=`<span class="os-ic">${ic(i.kind==='review'?'eye':'comment')}</span>`;
+      // the thread is the header, with its status; the whole conversation drops down under it
+      const id='osc-'+(++uid),on=opened.has(i.url),th=conversation(i);
+      body=`<div class="os-card${on?' open':''}" data-k="${esc(i.url)}">`+
+        `<button type="button" class="os-card-h" aria-expanded="${on}" aria-controls="${id}">${ic(sIc,'tone')}`+
+        `<span class="os-card-t">${title(i.title)}</span><span class="os-num">#${i.num}</span>`+
+        `<span class="os-pill sm">${sLabel}</span>${CHEV}</button>`+
+        `<div class="os-card-more" id="${id}" role="region" aria-label="${esc(i.title)}"${on?'':' inert'}><div class="os-card-in"><div class="os-thread">`+
+        (th||`<a class="os-earlier" href="${esc(i.threadUrl)}" target="_blank" rel="noopener">Read the thread on GitHub${GO}</a>`)+
+        `</div></div></div></div>`;
+    }
+    return `<li class="os-i t-${tone}">${badge}<div class="os-c"><p class="os-meta"><span>${verb}</span>${where}${when}</p>${body}</div></li>`;
+  }
+
+  function render(){
+    host.removeAttribute('aria-busy');
+    if(!data||!data.items||!data.items.length){
+      host.innerHTML=`<p class="os-status">Couldn't load my activity from GitHub just now. <a class="go" href="https://github.com/THEpranavsomalraju" target="_blank" rel="noopener">See it on GitHub<svg class="go-ic" viewBox="0 0 12 12" aria-hidden="true"><path d="M3.5 8.5 8.5 3.5M4.5 3.5h4v4"/></svg></a></p>`;
+      return;
+    }
+    const t=data.totals,has=k=>k==='all'||data.items.some(i=>group(i)===k);
+    const shown=data.items.filter(i=>filter==='all'||group(i)===filter);
+    let html=`<div class="os-head"><p class="os-sum">${plural(t.prs,'pull request','pull requests')}, ${plural(t.issues,'issue','issues')} and ${plural(t.comments,'comment','comments')} across ${plural(t.repos,'open-source project','open-source projects')}</p>`+
+      `<div class="os-filter" role="group" aria-label="Show"><span class="os-thumb" aria-hidden="true"></span>`+
+      FILTERS.filter(([k])=>has(k)).map(([k,l])=>`<button type="button" class="os-fb" data-f="${k}" aria-pressed="${k===filter}">${l}</button>`).join('')+`</div></div>`;
+    let cur='';
+    shown.slice(0,limit).forEach(i=>{
+      const m=month(i.at);
+      if(m!==cur){html+=(cur?'</ol>':'')+`<h3 class="os-month">${m}</h3><ol class="os-tl">`;cur=m}
+      html+=item(i);
+    });
+    if(cur)html+='</ol>';
+    if(shown.length>limit)html+=`<button type="button" class="os-more">Show older activity</button>`;
+    host.innerHTML=html;
+    placeThumb(true);
+  }
+  // the filter's ink slides to whichever is chosen, like the tab underline
+  function placeThumb(instant){
+    const on=$('.os-fb[aria-pressed="true"]',host),th=$('.os-thumb',host);
+    if(!on||!th)return;
+    if(instant)th.style.transition='none';
+    th.style.transform=`translateX(${on.offsetLeft}px)`;th.style.width=on.offsetWidth+'px';
+    if(instant){void th.offsetWidth;th.style.transition=''}
+  }
+  host.addEventListener('click',e=>{
+    const f=e.target.closest('.os-fb');
+    if(f){if(f.dataset.f!==filter){filter=f.dataset.f;limit=24;
+      $$('.os-fb',host).forEach(b=>b.setAttribute('aria-pressed',b===f));placeThumb();setTimeout(render,reduce?0:180)}return}
+    const h=e.target.closest('.os-card-h');
+    if(h){const card=h.closest('.os-card'),on=!card.classList.contains('open');
+      card.classList.toggle('open',on);h.setAttribute('aria-expanded',on);$('#'+h.getAttribute('aria-controls')).inert=!on;
+      on?opened.add(card.dataset.k):opened.delete(card.dataset.k);
+      const f=on&&$('.os-say.focus',card);
+      if(f)setTimeout(()=>{const r=f.getBoundingClientRect();if(r.top<56||r.bottom>innerHeight)f.scrollIntoView({block:'center',behavior:reduce?'auto':'smooth'})},reduce?0:430);
+      return}
+    if(e.target.closest('.os-more')){limit+=24;const y=scrollY;render();scrollTo(0,y)}
+  });
+  addEventListener('resize',()=>placeThumb(true));
+
+  let lastJson='';
+  function load(){
+    if(loading)return;loading=true;
+    fetch('/api/opensource',{headers:{accept:'application/json'}})
+      .then(r=>r.ok?r.text():null).catch(()=>null)
+      .then(txt=>{
+        loading=false;
+        let d=null;try{d=txt&&JSON.parse(txt)}catch(e){}
+        if(d&&d.items){fetchedAt=Date.now();if(txt===lastJson&&data)return;lastJson=txt;data=d}
+        else if(data)return;          // a failed refresh keeps what's already showing
+        const y=scrollY;render();if(curTab==='opensource')scrollTo(0,y);   // open dropdowns stay open: they're keyed by comment
+      });
+  }
+  // while the tab is open, check for new activity every five minutes, the
+  // same as the edge cache, so a comment I've just posted turns up by itself
+  setInterval(()=>{if(curTab==='opensource'&&!document.hidden)load()},5*60*1000);
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden&&curTab==='opensource'&&Date.now()-fetchedAt>5*60*1000)load()});
+  // fetched quietly once the page is idle, so the tab is usually ready before it's opened
+  (window.requestIdleCallback||(f=>setTimeout(f,2500)))(()=>{if(!data)load()});
+  return{enter(){if(!data||Date.now()-fetchedAt>5*60*1000)load();else placeThumb(true)}};
+})();
+
 // ───────────────────────── palette ─────────────────────────
 const pal=$('#palette'),palQ=$('#pal-q'),palList=$('#pal-list');
 const CMDS=[
@@ -336,7 +578,7 @@ document.addEventListener('keydown',e=>{
   if(typing||e.metaKey||e.ctrlKey||e.altKey||!pal.hidden)return;
   if(e.key==='/'){e.preventDefault();palOpen();return}
   if(curTab==='projects'&&(e.key==='j'||e.key==='k')){net.step(e.key==='j'?1:-1);return}
-  const n={'1':'home','2':'experience','3':'projects'}[e.key];
+  const n={'1':'home','2':'experience','3':'projects','4':'opensource'}[e.key];
   if(n)location.hash=n;
 });
 

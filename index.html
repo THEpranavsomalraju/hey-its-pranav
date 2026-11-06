@@ -52,6 +52,7 @@
     <button class="tab" role="tab" id="t-home" aria-controls="v-home" data-tab="home">Home</button>
     <button class="tab" role="tab" id="t-experience" aria-controls="v-experience" data-tab="experience">Experience</button>
     <button class="tab" role="tab" id="t-projects" aria-controls="v-projects" data-tab="projects">Projects</button>
+    <button class="tab" role="tab" id="t-opensource" aria-controls="v-opensource" data-tab="opensource">Open source</button>
     <span class="tab-ink" id="tab-ink" aria-hidden="true"></span>
   </div>
 
@@ -124,6 +125,11 @@
       <svg id="net" viewBox="0 0 1200 440" role="group" aria-label="The tools I use, feeding into the projects they made. Hover or focus a project to read about it."></svg>
     </div>
     <article class="detail" id="detail" aria-live="polite"></article>
+  </section>
+
+  <!-- OPEN SOURCE: filled from /api/opensource the first time the tab opens -->
+  <section class="view" id="v-opensource" role="tabpanel" aria-labelledby="t-opensource" data-view="opensource" hidden>
+    <div class="os" id="os" aria-live="polite" aria-busy="true"><p class="os-status">Loading activity from GitHub…</p></div>
   </section>
 
 </main>

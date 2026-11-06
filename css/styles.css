@@ -310,6 +310,138 @@ blockquote{margin:26px 0 0;padding:0 0 0 14px;border-left:2px solid var(--ink);c
 .d-links a{border-bottom:1px solid var(--line-2);transition:border-color .2s}
 .d-links a:hover{border-color:var(--ink)}
 
+/* ───────────────────────── open source ─────────────────────────
+   GitHub's timeline grammar in this page's type: a rail, a badge per event in
+   the colour GitHub gives its state, the project and its stars, comments as
+   cards. those state colours are the only colour on the tab */
+/* each state has two colours, as GitHub does: a foreground for icons, and a
+   deeper fill that white text stays readable on */
+.os{--gh-open:#1a7f37;--gh-merged:#8250df;--gh-closed:#cf222e;--gh-done:#8250df;--gh-muted:#59636e;
+  --gh-open-bg:#1f883d;--gh-merged-bg:#8250df;--gh-closed-bg:#cf222e;--gh-done-bg:#8250df;--gh-muted-bg:#59636e;
+  --gh-link:#0969da;--gh-me:#ddf4ff;--gh-me-line:#54aeff66;min-height:200px}
+:root[data-theme="dark"] .os{--gh-open:#3fb950;--gh-merged:#a371f7;--gh-closed:#f85149;--gh-done:#a371f7;--gh-muted:#9198a1;
+  --gh-open-bg:#238636;--gh-merged-bg:#8957e5;--gh-closed-bg:#da3633;--gh-done-bg:#8957e5;--gh-muted-bg:#656c76;
+  --gh-link:#4493f8;--gh-me:rgba(56,139,253,.1);--gh-me-line:rgba(56,139,253,.4)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .os{--gh-open:#3fb950;--gh-merged:#a371f7;--gh-closed:#f85149;--gh-done:#a371f7;--gh-muted:#9198a1;
+  --gh-open-bg:#238636;--gh-merged-bg:#8957e5;--gh-closed-bg:#da3633;--gh-done-bg:#8957e5;--gh-muted-bg:#656c76;
+  --gh-link:#4493f8;--gh-me:rgba(56,139,253,.1);--gh-me-line:rgba(56,139,253,.4)}}
+.t-open{--tone:var(--gh-open);--tone-bg:var(--gh-open-bg)}.t-merged{--tone:var(--gh-merged);--tone-bg:var(--gh-merged-bg)}
+.t-closed{--tone:var(--gh-closed);--tone-bg:var(--gh-closed-bg)}.t-done{--tone:var(--gh-done);--tone-bg:var(--gh-done-bg)}
+.t-muted{--tone:var(--gh-muted);--tone-bg:var(--gh-muted-bg)}
+.os-status{color:var(--muted)}
+.os-status a{color:var(--ink);font-weight:600;border-bottom:1px solid var(--line-2)}
+
+.os-head{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:14px 20px;margin-bottom:6px}
+.os-sum{margin:0;font-size:15px;line-height:1.5;color:var(--muted)}
+.os-sum b{font-weight:600;color:var(--ink);font-variant-numeric:tabular-nums}
+.os-filter{position:relative;display:inline-flex;padding:2px;border:1px solid var(--line-2);border-radius:8px}
+.os-thumb{position:absolute;top:2px;bottom:2px;left:0;width:0;border-radius:6px;background:var(--ink);
+  transition:transform .4s var(--ease),width .4s var(--ease)}
+.os-fb{position:relative;z-index:1;height:26px;padding:0 10px;font:500 12px var(--mono);color:var(--muted);white-space:nowrap;transition:color .3s}
+.os-fb:hover{color:var(--ink)}
+.os-fb[aria-pressed="true"]{color:var(--bg)}
+
+/* the month stays pinned under the top bar while its entries scroll past */
+.os-month{position:sticky;top:46px;z-index:2;display:flex;align-items:center;gap:12px;margin:0;padding:22px 0 12px;
+  background:var(--bg);font-size:14px;font-weight:600;color:var(--ink)}
+.os-month::after{content:"";flex:1;height:1px;background:var(--line)}
+.os-tl{list-style:none;margin:0;padding:0;position:relative}
+.os-tl::before{content:"";position:absolute;left:15px;top:6px;bottom:6px;width:2px;background:var(--line)}
+.os-i{position:relative;display:grid;grid-template-columns:32px minmax(0,1fr);column-gap:14px;padding:6px 0 20px}
+.os-i:last-child{padding-bottom:6px}
+.os-ic{position:relative;z-index:1;width:32px;height:32px;border-radius:50%;display:grid;place-items:center;
+  background:var(--bg-2);color:var(--muted);box-shadow:0 0 0 4px var(--bg),inset 0 0 0 1px var(--line-2)}
+.os-ic.solid{background:var(--tone-bg);color:#fff;box-shadow:0 0 0 4px var(--bg)}
+.oc{width:16px;height:16px;flex:none;fill:currentColor}
+.os-c{min-width:0;padding-top:5px}
+.os-meta{display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 8px;margin:0 0 5px;font-size:14px;line-height:1.45;color:var(--muted)}
+.os-repo{font:500 13px var(--mono);color:var(--ink);border-bottom:1px solid transparent;transition:border-color .2s}
+.os-repo:hover{border-color:var(--ink)}
+.os-stars{display:inline-flex;align-items:center;gap:3px;font:12px var(--mono);color:var(--muted)}
+.os-stars .oc{width:12px;height:12px}
+.os-meta time{margin-left:auto;font:12px var(--mono);color:var(--muted);white-space:nowrap}
+.os-t{margin:0;line-height:1.45}
+.os-title{font-size:16.5px;font-weight:600;letter-spacing:-.01em;color:var(--ink);border-bottom:1px solid transparent;transition:border-color .2s}
+.os-title:hover{border-color:var(--ink)}
+.os-num{color:var(--muted);font-weight:400;white-space:nowrap}
+.os-title code,.os-card-t code,.os-evt a code{font:500 .86em var(--mono);padding:.1em .32em;border-radius:5px;background:var(--bg-2)}
+.os-pill{display:inline-flex;align-items:center;gap:4px;height:22px;padding:0 9px 0 7px;margin-left:2px;vertical-align:2px;
+  border-radius:999px;background:var(--tone-bg);color:#fff;font-size:12px;font-weight:600;white-space:nowrap}
+.os-pill .oc{width:13px;height:13px}
+/* a comment, as GitHub boxes one: the thread in a header bar, and the
+   comments under it, dropping down when the header is clicked */
+.os-card{margin-top:2px;border:1px solid var(--line-2);border-radius:8px;overflow:hidden;transition:border-color .2s}
+.os-card:hover,.os-card.open{border-color:color-mix(in srgb,var(--muted) 55%,var(--line-2))}
+.os-card-h{display:flex;align-items:center;gap:7px;width:100%;min-width:0;padding:8px 12px;text-align:left;cursor:pointer;
+  background:var(--bg-2);border-bottom:1px solid transparent;font-size:13.5px;color:var(--ink-2);transition:background .2s,border-color .3s}
+.os-card-h:hover{background:color-mix(in srgb,var(--bg-2) 70%,var(--line-2))}
+.os-card-h:focus-visible{outline-offset:-2px}
+.os-card.open .os-card-h{border-bottom-color:var(--line-2)}
+.os-card-h .tone{color:var(--tone)}
+.os-card-t{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:500}
+.os-chev{width:12px;height:12px;flex:none;margin-left:auto;fill:none;stroke:var(--muted);stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;
+  transition:transform .3s var(--ease),stroke .2s}
+.os-card-h:hover .os-chev,.os-card.open .os-chev{stroke:var(--ink)}
+.os-card.open .os-chev{transform:rotate(90deg)}
+.os-card-more{display:grid;grid-template-rows:0fr;transition:grid-template-rows .38s var(--ease)}
+.os-card.open .os-card-more{grid-template-rows:1fr}
+.os-card-in{min-height:0;overflow:hidden;opacity:0;transition:opacity .22s ease}
+.os-card.open .os-card-in{opacity:1;transition-delay:.06s}
+.os-pill.sm{height:19px;padding:0 7px;margin-left:2px;font-size:11px;flex:none}
+/* inside: the thread as GitHub shows it. avatars down the left on a rail,
+   each comment in a box with a header bar, events sitting on the rail */
+.os-thread{position:relative;padding:14px 12px 2px}
+.os-thread::before{content:"";position:absolute;left:25px;top:22px;bottom:22px;width:2px;background:var(--line)}
+.os-say{position:relative;display:grid;grid-template-columns:28px minmax(0,1fr);column-gap:10px;margin-bottom:14px}
+.os-av{display:block;width:28px;height:28px}
+.os-av img{display:block;width:28px;height:28px;border-radius:50%;background:var(--bg-2);box-shadow:0 0 0 3px var(--bg)}
+.os-say-box{min-width:0;border:1px solid var(--line-2);border-radius:6px;overflow:hidden;background:var(--bg)}
+.os-say-h{display:flex;flex-wrap:wrap;align-items:center;gap:3px 6px;padding:6px 10px;background:var(--bg-2);border-bottom:1px solid var(--line-2);
+  font-size:13px;line-height:1.5;color:var(--muted)}
+.os-who{font-weight:600;color:var(--ink)}
+.os-who:hover,.os-say-when:hover{text-decoration:underline}
+.os-say-when{color:var(--muted)}
+.os-edited{font-size:12px;color:var(--muted);border-bottom:1px dotted var(--line-2);cursor:help}
+.os-roles{display:flex;gap:4px;margin-left:auto}
+.os-role{padding:0 7px;border:1px solid var(--line-2);border-radius:999px;font-size:11.5px;line-height:18px;color:var(--muted);white-space:nowrap}
+/* mine, the way GitHub marks your own comments */
+.os-say.me .os-say-box{border-color:var(--gh-me-line)}
+.os-say.me .os-say-h{background:var(--gh-me);border-bottom-color:var(--gh-me-line)}
+/* the comment this entry is about, ringed the way GitHub marks a comment you linked to */
+.os-say.focus .os-say-box{border-color:var(--gh-link);box-shadow:0 0 0 3px color-mix(in srgb,var(--gh-link) 22%,transparent)}
+.os-md{padding:9px 11px;font-size:14px;line-height:1.6;color:var(--ink-2);overflow-wrap:anywhere}
+.os-md p,.os-md ul,.os-md pre,.os-md blockquote{margin:0 0 8px}
+.os-md>:last-child{margin-bottom:0}
+.os-md ul{padding-left:20px}
+.os-md a{color:var(--gh-link)}
+.os-md a:hover{text-decoration:underline}
+.os-at{font-weight:600}
+.os-md code{font:12.5px var(--mono);padding:.12em .36em;border-radius:5px;background:var(--bg-2)}
+.os-md pre{padding:9px 11px;border-radius:6px;background:var(--bg-2);overflow-x:auto}
+.os-md pre code{padding:0;background:none;font-size:12.5px;line-height:1.55;white-space:pre}
+.os-md blockquote{padding:0 0 0 10px;border-left:3px solid var(--line-2);color:var(--muted)}
+.os-md blockquote.os-alert{border-left-color:var(--gh-link);color:var(--ink-2)}
+.os-md blockquote.os-alert>p:first-child strong{color:var(--gh-link)}
+.os-quiet{color:var(--muted);font-style:italic}
+.os-rest{display:inline-flex;align-items:center;gap:5px;margin-top:6px;font:12px var(--mono);color:var(--muted)}
+.os-rest:hover{color:var(--ink)}
+.os-evt{position:relative;display:grid;grid-template-columns:28px minmax(0,1fr);column-gap:10px;align-items:center;margin:-4px 0 12px;
+  font-size:13px;line-height:1.5;color:var(--muted)}
+.os-evt-ic{justify-self:center;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;
+  background:var(--bg-2);color:var(--tone);box-shadow:0 0 0 3px var(--bg),inset 0 0 0 1px var(--line-2)}
+.os-evt.t-merged .os-evt-ic,.os-evt.t-done .os-evt-ic,.os-evt.t-closed .os-evt-ic{background:var(--tone-bg);color:#fff;box-shadow:0 0 0 3px var(--bg)}
+.os-evt-ic .oc{width:14px;height:14px}
+.os-evt b{font-weight:600;color:var(--ink)}
+.os-evt a{color:var(--ink);font-weight:500}
+.os-evt a:hover{text-decoration:underline}
+.os-earlier{display:flex;justify-content:center;align-items:center;gap:5px;margin:0 0 14px 38px;padding:6px;border:1px dashed var(--line-2);border-radius:6px;
+  font:12px var(--mono);color:var(--muted)}
+.os-earlier:hover{color:var(--ink);border-color:var(--muted)}
+.os-after{margin-top:-2px}
+.os-more{margin:8px 0 0 46px;display:inline-flex;align-items:center;height:32px;padding:0 14px;border:1px solid var(--line-2);border-radius:6px;
+  font-size:13.5px;font-weight:500;transition:border-color .2s}
+.os-more:hover{border-color:var(--ink)}
+
 /* ───────────────────────── palette ───────────────────────── */
 .palette{position:fixed;inset:0;z-index:60;background:var(--scrim);display:flex;justify-content:center;align-items:flex-start;padding:13vh 14px 0}
 .pal-box{width:min(560px,100%);background:var(--bg);border-radius:12px;box-shadow:var(--shadow);overflow:hidden;animation:pop2 .2s var(--ease)}
@@ -362,6 +494,16 @@ blockquote{margin:26px 0 0;padding:0 0 0 14px;border-left:2px solid var(--ink);c
   #net .ni text{font-size:15px}
   .d-title{font-size:27px}
   .d-rows{grid-template-columns:86px 1fr}
+  .os-i{column-gap:12px}
+  .os-card-t{white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+  /* threads go full width, the way GitHub's mobile layout drops the avatar column */
+  .os-thread{padding:10px 8px 0}
+  .os-thread::before,.os-av{display:none}
+  .os-say,.os-evt{grid-template-columns:minmax(0,1fr)}
+  .os-evt{grid-template-columns:24px minmax(0,1fr);column-gap:8px;margin:0 0 10px}
+  .os-earlier{margin-left:0}
+  .os-meta time{margin-left:0}
+  .os-more{margin-left:44px}
 }
 
 @media (prefers-reduced-motion:reduce){

@@ -1,10 +1,10 @@
 # hey-its-pranav
 
-Pranav Somalraju's personal site. A single page laid out like a document, with three tabs: Home (bio, recent wins, contact, a live GitHub contribution skyline, and what's been playing on Spotify), Experience (one row per role; each opens like a toggle onto a line about what was done there, with the standout numbers highlighted), and Projects (a network of shared tools feeding into each project, with the project's details underneath; left alone it walks through the projects, and choosing one stops it).
+Pranav Somalraju's personal site. A single page laid out like a document, with four tabs: Home (bio, recent wins, contact, a live GitHub contribution skyline, and what's been playing on Spotify), Experience (one row per role; each opens like a toggle onto a line about what was done there, with the standout numbers highlighted), and Projects (a network of shared tools feeding into each project, with the project's details underneath; left alone it walks through the projects, and choosing one stops it), and Open source (my public issues, pull requests and comments on other people's projects, as a GitHub-style timeline that keeps itself current).
 
 Live at **https://pranavsomalraju.dev**
 
-Plain HTML, CSS, and vanilla JS. No build step and no dependencies; the only server-side pieces are two Vercel functions, one reading GitHub and one reading Spotify.
+Plain HTML, CSS, and vanilla JS. No build step and no dependencies; the only server-side pieces are three Vercel functions, two reading GitHub and one reading Spotify.
 
 ## Structure
 
@@ -15,6 +15,7 @@ Plain HTML, CSS, and vanilla JS. No build step and no dependencies; the only ser
 - `js/squeeze.js` — the listening carousel, a dependency-free port of the React `carousel-squeeze` component
 - `api/contributions.js` — Vercel function returning the year's GitHub contribution calendar
 - `api/listening.js` — Vercel function returning the current Spotify track and recently played ones, with album art
+- `api/opensource.js` — Vercel function returning my public open-source activity for the Open source tab
 - `scripts/spotify-token.mjs` — one-time local helper that mints the Spotify refresh token
 - `portrait.jpg` — the portrait at the top of the page
 - `img/` — the experience marks and `share.png`, the 1200×630 social share card (portrait and name). Every mark sits in the same 40px square tile, so each is the organisation's own small-square mark: `caltech-mark.png` and `duke-mark.png` are the official app icons from caltech.edu and duke.edu, `unchealth.svg` is the stacked lockup UNC Health uses as its own favicon (`unchealth-dark.svg` is the reversed version for dark mode), `atc.svg` and `hms.svg` are already square. A wide wordmark shrinks to a sliver in a square, so don't use one there. `unc.png` is the bio's pop-up logo
@@ -41,6 +42,16 @@ vercel dev            # serves the site and /api together
 ## GitHub contributions
 
 `api/contributions.js` works with no setup: it reads the public contribution calendar GitHub renders on the profile. That page's markup is not a stable API, so for something sturdier set `GITHUB_TOKEN` in the Vercel project (a fine-grained token with no extra permissions is enough) and it switches to the GraphQL API. Responses are edge-cached for ten minutes.
+
+## Open source
+
+`api/opensource.js` asks GitHub's GraphQL API for my pull requests, issues, comments and reviews, and **needs `GITHUB_TOKEN`** in the Vercel project (a fine-grained token with no extra permissions; it only reads public data). Without it the tab shows a link to my GitHub profile instead of the timeline. The same happens when the token expires: make a new one the same way (public repositories, no permissions) and replace `GITHUB_TOKEN` in Vercel. There is no tokenless fallback: the public events feed no longer carries PR titles, merge state or how the author relates to the repo.
+
+What counts as open source is GitHub's own `authorAssociation`: work where I'm an outside contributor (`NONE`, `CONTRIBUTOR`, `FIRST_TIME_CONTRIBUTOR`, `FIRST_TIMER`). My own repos, and team or hackathon repos where I'm a member or collaborator, drop out on their own, so there's no list to keep. Every comment is its own entry, at the moment it was posted, so coming back to a thread the next day shows up as two entries at their real times; anything from this week shows the time of day. Opening one shows the conversation the way GitHub does, **as it stood at that moment**: who opened the thread and what they wrote, everyone's comments posted up to then (from the latest 30) with their username, avatar and role (Member, Contributor, Author…), and the events up to then (closed, merged, mentioned elsewhere), with my own comments marked and the entry's own comment outlined, the way GitHub marks a comment you followed a link to. Anything that came later is left out, with a link saying the thread continued. The status badge is the thread's state at that moment too, replayed from its close, reopen and merge events. GitHub only serves a comment's current text, so one edited since is marked "edited", as GitHub does. That takes a second GraphQL query for the threads; if it fails, the timeline still renders without them.
+
+Responses are edge-cached for five minutes, and an open tab checks again every five, so a new comment turns up on its own; open dropdowns stay open across the refresh.
+
+Comment text is GitHub markdown written by other people, so the page renders it itself rather than inserting GitHub's HTML: everything is escaped first, and the only tags it ever adds are `p a code pre strong em blockquote ul li br`, with links limited to `http(s)`.
 
 ## Spotify
 

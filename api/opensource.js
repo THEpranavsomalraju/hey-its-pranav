@@ -172,7 +172,9 @@ module.exports=async function handler(req,res){
 
     // five minutes at the edge, so a new comment shows up soon after it's posted
     res.setHeader('cache-control','public, max-age=0, s-maxage=300, stale-while-revalidate=600');
-    res.status(200).json({configured:true,user:USER,repos,items:shown,threads:threadMap,totals,...(why.length?{partial:why}:{})});
+    // partial answers go to the logs, not the page: they can name my token's settings URL
+    if(why.length)console.warn('opensource partial:',why.join(' | '));
+    res.status(200).json({configured:true,user:USER,repos,items:shown,threads:threadMap,totals});
   }catch(err){
     console.error('opensource:',err.message);
     // GitHub's own message, never the token, so a failure can be read from outside

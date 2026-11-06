@@ -105,7 +105,11 @@ module.exports=async function handler(req,res){
     };
     const j=await gql(QUERY,{login:USER});
     const u=j&&j.data&&j.data.user;
-    if(!u)throw new Error('graphql: '+((j&&j.errors&&j.errors[0]&&j.errors[0].message)||'no user'));
+    // GitHub can answer with data and errors together (an org that blocks this
+    // kind of token leaves holes); use what came back, and say what didn't
+    const why=(j&&j.errors||[]).map(e=>e.message).slice(0,3);
+    if(!u)throw new Error('graphql: '+(why[0]||'no user'));
+    const nodes=c=>(c&&c.nodes||[]).filter(Boolean);
 
     const repos={};
     const keep=(assoc,repo)=>{
@@ -117,12 +121,12 @@ module.exports=async function handler(req,res){
     };
     const items=[];
 
-    for(const p of u.pullRequests.nodes){
+    for(const p of nodes(u.pullRequests)){
       if(!keep(p.authorAssociation,p.repository))continue;
       items.push({kind:'pr',at:p.createdAt,repo:p.repository.nameWithOwner,num:p.number,title:p.title,url:p.url,
         state:prState(p),mergedAt:p.mergedAt||null});
     }
-    for(const i of u.issues.nodes){
+    for(const i of nodes(u.issues)){
       if(!keep(i.authorAssociation,i.repository))continue;
       items.push({kind:'issue',at:i.createdAt,repo:i.repository.nameWithOwner,num:i.number,title:i.title,url:i.url,
         state:issueState(i)});
@@ -133,7 +137,7 @@ module.exports=async function handler(req,res){
     // each carries its own text, in case it's older than the comments fetched
     // with the thread
     const threads=new Map();
-    for(const c of u.issueComments.nodes){
+    for(const c of nodes(u.issueComments)){
       const t=c.issue;
       if(!t||!keep(c.authorAssociation,t.repository))continue;
       const pr=c.pullRequest;
@@ -143,7 +147,7 @@ module.exports=async function handler(req,res){
     }
     items.push(...threads.values());
 
-    for(const n of u.contributionsCollection.pullRequestReviewContributions.nodes){
+    for(const n of nodes(u.contributionsCollection&&u.contributionsCollection.pullRequestReviewContributions)){
       const rv=n.pullRequestReview,p=rv&&rv.pullRequest;
       if(!p||!keep(rv.authorAssociation,p.repository))continue;
       items.push({kind:'review',at:rv.createdAt,repo:p.repository.nameWithOwner,num:p.number,title:p.title,url:rv.url,
@@ -168,9 +172,10 @@ module.exports=async function handler(req,res){
 
     // five minutes at the edge, so a new comment shows up soon after it's posted
     res.setHeader('cache-control','public, max-age=0, s-maxage=300, stale-while-revalidate=600');
-    res.status(200).json({configured:true,user:USER,repos,items:shown,threads:threadMap,totals});
+    res.status(200).json({configured:true,user:USER,repos,items:shown,threads:threadMap,totals,...(why.length?{partial:why}:{})});
   }catch(err){
     console.error('opensource:',err.message);
-    res.status(200).json({configured:true,error:true});
+    // GitHub's own message, never the token, so a failure can be read from outside
+    res.status(200).json({configured:true,error:true,reason:String(err.message).slice(0,300)});
   }
 };
